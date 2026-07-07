@@ -79,17 +79,17 @@ const Layout: React.FC = () => {
               </Link>
             </li>
 
-            <li className={`menu-item ${isActive('/requests') ? 'active' : ''}`}>
-              <Link to="/requests">
-                <ClipboardList size={20} />
-                {!isCollapsed && <span>Service Requests</span>}
-              </Link>
-            </li>
-
             <li className={`menu-item ${isActive('/services') ? 'active' : ''}`}>
               <Link to="/services">
                 <Settings size={20} />
                 {!isCollapsed && <span>RTO Services</span>}
+              </Link>
+            </li>
+
+            <li className={`menu-item ${isActive('/requests') ? 'active' : ''}`}>
+              <Link to="/requests">
+                <ClipboardList size={20} />
+                {!isCollapsed && <span>Service Requests</span>}
               </Link>
             </li>
 
