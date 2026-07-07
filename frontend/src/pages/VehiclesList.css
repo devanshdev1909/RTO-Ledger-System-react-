@@ -1,0 +1,177 @@
+/* ===== VEHICLES PAGE SPECIFIC STYLES ===== */
+.vehicle-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  background-color: var(--bg-primary);
+  border: 1px solid var(--border-color);
+  color: var(--text-primary);
+  text-transform: uppercase;
+}
+
+.driver-info-cell {
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+}
+
+.driver-info-cell .name {
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.driver-info-cell .mobile {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+}
+
+.technical-codes {
+  font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  background-color: var(--bg-primary);
+  padding: 2px 6px;
+  border-radius: 4px;
+  border: 1px solid var(--border-color);
+  display: inline-block;
+}
+
+/* ===== TABLE STRUCTURE STYLES ===== */
+.table-card {
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.02);
+  margin-top: 20px;
+}
+
+.app-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+.app-table th {
+  background-color: rgba(0, 0, 0, 0.2); /* Tinted background for header */
+  padding: 16px 20px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+  letter-spacing: 0.5px;
+  border-bottom: 1.5px solid var(--border-color);
+}
+
+.app-table td {
+  padding: 16px 20px;
+  font-size: 0.9rem;
+  border-bottom: 1px solid var(--border-color);
+  color: var(--text-primary);
+  vertical-align: middle;
+}
+
+.app-table tr:hover td {
+  background-color: rgba(255, 255, 255, 0.01);
+}
+
+/* Status Badges */
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 12px;
+  border-radius: 99px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: 0.2s;
+  border: 1px solid transparent;
+}
+
+.status-badge.active {
+  background-color: rgba(16, 185, 129, 0.12);
+  color: #10b981;
+  border-color: rgba(16, 185, 129, 0.2);
+}
+
+.status-badge.inactive {
+  background-color: rgba(239, 68, 68, 0.12);
+  color: #ef4444;
+  border-color: rgba(239, 68, 68, 0.2);
+}
+
+/* Action button row */
+.action-buttons-cell {
+  display: flex;
+  gap: 8px;
+}
+
+.btn-icon {
+  background: none;
+  border: 1.5px solid var(--border-color);
+  color: var(--text-secondary);
+  padding: 6px;
+  border-radius: 8px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: 0.2s;
+}
+
+.btn-icon:hover {
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  border-color: #3b82f6;
+}
+
+.btn-icon.delete:hover {
+  border-color: #ef4444;
+  color: #ef4444;
+  background-color: rgba(239, 68, 68, 0.05);
+}
+
+/* Pagination Row */
+.pagination-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 20px;
+  background-color: var(--bg-secondary);
+  border-top: 1.5px solid var(--border-color);
+}
+
+.pagination-info {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+}
+
+.pagination-controls {
+  display: flex;
+  gap: 8px;
+}
+
+.pagination-btn {
+  background: none;
+  border: 1.5px solid var(--border-color);
+  color: var(--text-primary);
+  padding: 6px 12px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.pagination-btn:hover:not(:disabled) {
+  background-color: var(--bg-primary);
+}
+
+.pagination-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}

@@ -1,0 +1,101 @@
+/* Styling for receipts list and receipt print layouts */
+.receipt-amount-text {
+  font-weight: 700;
+  color: #10b981;
+}
+
+.payment-mode-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 8px;
+  border-radius: 4px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  background-color: var(--bg-primary);
+  border: 1px solid var(--border-color);
+  color: var(--text-primary);
+}
+
+/* Print Invoice Box styles */
+.print-invoice-container {
+  padding: 24px;
+  background-color: white;
+  color: #1e293b;
+  font-family: 'Courier New', Courier, monospace; /* Classic invoice font style */
+  max-width: 450px;
+  margin: 0 auto;
+  border: 1px dashed #cbd5e1;
+}
+
+.invoice-header {
+  text-align: center;
+  border-bottom: 2px dashed #94a3b8;
+  padding-bottom: 12px;
+  margin-bottom: 15px;
+}
+
+.invoice-header h1 {
+  font-size: 1.4rem;
+  font-weight: 800;
+  margin-bottom: 4px;
+  letter-spacing: 0.5px;
+}
+
+.invoice-header p {
+  font-size: 0.8rem;
+  color: #64748b;
+}
+
+.invoice-meta-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.85rem;
+  margin-bottom: 8px;
+}
+
+.invoice-meta-label {
+  font-weight: 700;
+}
+
+.invoice-separator {
+  border-bottom: 1px dashed #cbd5e1;
+  margin: 12px 0;
+}
+
+.invoice-total-section {
+  text-align: right;
+  margin-top: 15px;
+  border-top: 2px dashed #94a3b8;
+  padding-top: 10px;
+}
+
+.invoice-total-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 1.1rem;
+  font-weight: 800;
+}
+
+.invoice-footer {
+  text-align: center;
+  margin-top: 30px;
+  font-size: 0.8rem;
+  color: #64748b;
+}
+
+/* Hide background and interface elements during print preview */
+@media print {
+  body * {
+    visibility: hidden;
+  }
+  .print-invoice-container, .print-invoice-container * {
+    visibility: visible;
+  }
+  .print-invoice-container {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    border: none;
+  }
+}

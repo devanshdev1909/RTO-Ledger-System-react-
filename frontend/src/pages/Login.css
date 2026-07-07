@@ -1,0 +1,297 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+}
+
+.login-body-wrapper {
+  min-height: 100vh;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  overflow: hidden;
+  position: relative;
+  background: #0f172a;
+}
+
+.background-shape {
+  position: absolute;
+  border-radius: 50%;
+  z-index: 0;
+}
+
+.shape-1 {
+  width: 350px;
+  height: 350px;
+  background: rgba(59, 130, 246, 0.08);
+  top: -100px;
+  left: -100px;
+}
+
+.shape-2 {
+  width: 300px;
+  height: 300px;
+  background: rgba(37, 99, 235, 0.08);
+  bottom: -100px;
+  right: -100px;
+}
+
+.login-container {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  z-index: 2;
+}
+
+.login-card {
+  width: 100%;
+  max-width: 470px;
+  background: #0f172a;
+  border-radius: 22px;
+  overflow: hidden;
+  border: 1px solid black;
+  box-shadow:
+    0 25px 60px rgba(23, 35, 60, 0.12),
+    0 10px 25px rgba(23, 35, 60, 0.08);
+  margin: auto;
+}
+
+.logo-section {
+  background: rgba(37, 99, 235, 0.08);
+  color: white;
+  text-align: center;
+  padding: 40px 5px;
+}
+
+.logo-icon {
+  font-size: 42px;
+  margin-bottom: 12px;
+}
+
+.logo-section h1 {
+  font-size: 36px;
+  font-weight: 700;
+  margin-bottom: 10px;
+  letter-spacing: 0.5px;
+}
+
+.logo-section p {
+  font-size: 15px;
+  line-height: 1.7;
+  opacity: 0.9;
+}
+
+.tabs {
+  display: flex;
+  border-bottom: 1px solid black;
+  background: #0f172a;
+}
+
+.tab-btn {
+  flex: 1;
+  padding: 15px;
+  text-align: center;
+  border: none;
+  background: none;
+  font-size: 16px;
+  font-weight: 600;
+  color: rgb(255, 255, 255);
+  cursor: pointer;
+  transition: 0.3s;
+  border-bottom: 3px solid transparent;
+}
+
+.tab-btn:hover {
+  color: #3b82f6;
+}
+
+.tab-btn.active {
+  color: #3b82f6;
+  border-bottom-color: #3b82f6;
+}
+
+.form-content {
+  display: none;
+  padding: 27px;
+}
+
+.form-content.active {
+  display: block;
+}
+
+.form-group-sm {
+  margin-bottom: 18px;
+}
+
+.form-group-sm label {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #f1f4f8;
+}
+
+/* INPUT WITH ICON */
+.input-icon-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.input-icon {
+  position: absolute;
+  left: 10px;
+  font-size: 14px;
+  pointer-events: none;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+}
+
+.input-icon-wrap input {
+  width: 100%;
+  padding: 12px 12px 12px 34px;
+  border: 1.5px solid #434344;
+  border-radius: 9px;
+  background: rgba(37, 99, 235, 0.08);
+  font-size: 14px;
+  color: #b1b2b4;
+  transition: 0.25s;
+  outline: none;
+}
+
+.input-icon-wrap input:focus {
+  border: 2px solid #3b82f6 ;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.12);
+}
+
+/* Password toggle button */
+.toggle-pw {
+  position: absolute;
+  right: 12px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 15px;
+  padding: 2px;
+  line-height: 1;
+  opacity: 0.7;
+  transition: opacity 0.2s;
+  color: #6b7280;
+}
+
+.toggle-pw:hover {
+  opacity: 1;
+}
+
+.login-btn {
+  width: 100%;
+  border: none;
+  color: white;
+  padding: 14px;
+  border-radius: 10px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.3s;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+}
+
+.login-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.login-btn:active {
+  transform: translateY(0);
+}
+
+.login-btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.customer-register-link {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  text-align: center;
+  margin-top: 15px;
+  font-size: 14px;
+  color: #6b7280;
+}
+
+.customer-register-link a {
+  color: #3b82f6;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.customer-register-link a:hover {
+  text-decoration: underline;
+}
+
+.error-banner {
+  background-color: #ffdddd;
+  color: #d8000c;
+  padding: 12px 20px;
+  font-size: 14px;
+  text-align: center;
+  border-bottom: 1px solid #ffcccc;
+}
+
+.footer-text {
+  text-align: center;
+  padding: 0 35px 30px;
+  color: #b1b2b4;
+  font-size: 13px;
+}
+
+@media(max-width:600px) {
+  .login-card {
+      max-width: 100%;
+  }
+
+  .logo-section {
+      padding: 30px 20px;
+  }
+
+  .logo-section h1 {
+      font-size: 30px;
+  }
+
+  .logo-section p {
+      font-size: 14px;
+  }
+
+  .form-content {
+      padding: 25px;
+  }
+
+  .shape-1,
+  .shape-2 {
+      display: none;
+  }
+}
+/* 
+  Ensures that autofilled inputs match your dark theme:
+  Keeps the background dark blue (#111d39) and the text white.
+*/
+input:-webkit-autofill,
+input:-webkit-autofill:hover, 
+input:-webkit-autofill:focus, 
+input:-webkit-autofill:active {
+  -webkit-box-shadow: 0 0 0 1000px #111d39 inset !important;
+  -webkit-text-fill-color: #b1b2b4 !important;
+  border: 1px solid #434344 !important;
+  border-radius: 7px !important;
+}

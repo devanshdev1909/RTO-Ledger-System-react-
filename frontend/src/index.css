@@ -1,0 +1,133 @@
+/* Color Tokens (Light Mode Defaults) */
+:root {
+  --sans: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  
+  --text-primary: #1e2d42;
+  --text-secondary: #6b7280;
+  --bg-primary: #eef4fb;
+  --bg-secondary: #ffffff;
+  --border-color: #d7dfec;
+  --button-color: #1c37a2ff;
+}
+
+/* Color Tokens (Dark Mode Override) */
+.dark-theme {
+  --text-primary: #f8fafc;
+  --text-secondary: #9aa5b8;
+  --bg-primary: #0a1128;       /* Sleek extra dark blue background */
+  --bg-secondary: #0f1f39;     /* Signature navy blue cards/menus */
+  --border-color: #1e2d4a;     /* Matching dark borders */
+}
+
+/* Auto-detect system preference if user hasn't toggled theme yet */
+@media (prefers-color-scheme: dark) {
+  :root:not(.light-theme) {
+    --text-primary: #f8fafc;
+    --text-secondary: #9aa5b8;
+    --bg-primary: #0a1128;
+    --bg-secondary: #0f1f39;
+    --border-color: #1e2d4a;
+  }
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: var(--sans);
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* 
+  Fix: Force the root React container to take 100% width 
+  and height, removing the constraints and border lines.
+*/
+#root {
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+a {
+  color: var(--button-color);
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+/* Global button override system to enforce var(--button-color) */
+.submit-btn, 
+.btn-primary, 
+.primary-btn, 
+.login-btn, 
+.quick-add-btn, 
+.print-btn,
+.portal-logout-btn {
+  background-color: var(--button-color) !important;
+  background: var(--button-color) !important;
+  border-color: var(--button-color) !important;
+  color: #ffffff !important;
+  transition: all 0.2s ease !important;
+}
+
+.submit-btn:hover, 
+.btn-primary:hover, 
+.primary-btn:hover, 
+.login-btn:hover, 
+.quick-add-btn:hover, 
+.print-btn:hover,
+.portal-logout-btn:hover {
+  filter: brightness(1.2) !important;
+  opacity: 0.92 !important;
+}
+
+/* Global Status Badges (Colored Tags) */
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px 10px;
+  font-size: 0.76rem;
+  font-weight: 700;
+  border-radius: 20px;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  white-space: nowrap;
+}
+
+/* Green (Success, Completed, Active) */
+.status-badge.completed,
+.status-badge.paid,
+.status-badge.active {
+  background-color: rgba(16, 185, 129, 0.12) !important;
+  color: #10b981 !important;
+  border: 1px solid rgba(16, 185, 129, 0.2);
+}
+
+/* Orange/Yellow (Pending, Partial, Processing) */
+.status-badge.pending,
+.status-badge.partial,
+.status-badge.processing {
+  background-color: rgba(245, 158, 11, 0.12) !important;
+  color: #f59e0b !important;
+  border: 1px solid rgba(245, 158, 11, 0.2);
+}
+
+/* Red (Cancelled, Rejected, Unpaid, Inactive) */
+.status-badge.cancelled,
+.status-badge.rejected,
+.status-badge.unpaid,
+.status-badge.inactive {
+  background-color: rgba(239, 68, 68, 0.12) !important;
+  color: #ef4444 !important;
+  border: 1px solid rgba(239, 68, 68, 0.2);
+}
