@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Link, useLocation, Outlet } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { 
   LayoutDashboard, Users, Car, ClipboardList, 
-  IndianRupee, ShieldCheck, LogOut, Sun, Moon,
+  IndianRupee, ShieldCheck, LogOut,
   ChevronLeft, ChevronRight, Settings, FileText, Plus 
 } from 'lucide-react';
 import QuickAddModal from './QuickAddModal';
@@ -14,31 +14,6 @@ const Layout: React.FC = () => {
   const location = useLocation();
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [showQuickAdd, setShowQuickAdd] = useState(false);
-
-  // 🌓 Dark / Light Theme state
-  const [theme, setTheme] = useState<'light' | 'dark'>(() => {
-    const saved = localStorage.getItem('theme');
-    if (saved === 'light' || saved === 'dark') return saved;
-    return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-  });
-
-  // Apply theme to document object
-  useEffect(() => {
-    const root = document.documentElement;
-    if (theme === 'dark') {
-      root.classList.add('dark-theme');
-      // Set html scheme for native browser inputs
-      root.setAttribute('style', 'color-scheme: dark;');
-    } else {
-      root.classList.remove('dark-theme');
-      root.setAttribute('style', 'color-scheme: light;');
-    }
-    localStorage.setItem('theme', theme);
-  }, [theme]);
-
-  const toggleTheme = () => {
-    setTheme(prev => prev === 'light' ? 'dark' : 'light');
-  };
 
   // Helper to check active link
   const isActive = (path: string) => {
@@ -181,17 +156,6 @@ const Layout: React.FC = () => {
                 <span>Quick Add</span>
               </button>
             )}
-
-            {/* Theme Toggle Button */}
-            <button 
-              type="button" 
-              className="theme-toggle" 
-              onClick={toggleTheme}
-              title={`Switch to ${theme === 'light' ? 'Dark' : 'Light'} Mode`}
-            >
-              {theme === 'light' ? <Moon size={20} /> : <Sun size={20} />}
-            </button>
-
             {/* User Details Badge */}
             <div className="user-profile-badge">
               <div className="avatar">
