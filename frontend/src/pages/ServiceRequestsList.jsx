@@ -7,46 +7,20 @@ import './ServiceRequestsList.css';
 import './VehiclesList.css'; // Inherits shared table and pagination styles
 import { useAuth } from '../context/AuthContext';
 
-interface ServiceRequestItem {
-  id: number;
-  request_no: string;
-  customer_id: number;
-  customer_name: string;
-  customer_code: string;
-  vehicle_id: number;
-  vehicle_number: string;
-  service_id: number;
-  service_name: string;
-  amount: number;
-  status: string;
-  remarks: string | null;
-  created_at: string;
-}
 
-interface CustomerDropdown {
-  id: number;
-  name: string;
-  customer_code: string;
-}
 
-interface VehicleDropdown {
-  id: number;
-  vehicle_number: string;
-  vehicle_type: string;
-}
 
-interface ServiceDropdown {
-  id: number;
-  service_name: string;
-  default_fee: number;
-}
 
-const ServiceRequestsList: React.FC = () => {
+
+
+
+
+const ServiceRequestsList = () => {
   const { user, hasPermission } = useAuth();
-  const [requests, setRequests] = useState<ServiceRequestItem[]>([]);
-  const [customers, setCustomers] = useState<CustomerDropdown[]>([]);
-  const [vehicles, setVehicles] = useState<VehicleDropdown[]>([]);
-  const [services, setServices] = useState<ServiceDropdown[]>([]);
+  const [requests, setRequests] = useState([]);
+  const [customers, setCustomers] = useState([]);
+  const [vehicles, setVehicles] = useState([]);
+  const [services, setServices] = useState([]);
 
   const [search, setSearch] = useState('');
   const [page, setPage] = useState(1);
@@ -56,9 +30,9 @@ const ServiceRequestsList: React.FC = () => {
 
   // Modal control
   const [showModal, setShowModal] = useState(false);
-  const [modalMode, setModalMode] = useState<'create' | 'edit'>('create');
-  const [selectedRequestId, setSelectedRequestId] = useState<number | null>(null);
-  const [errorMsg, setErrorMsg] = useState<string | null>(null);
+  const [modalMode, setModalMode] = useState('create');
+  const [selectedRequestId, setSelectedRequestId] = useState(null);
+  const [errorMsg, setErrorMsg] = useState(null);
 
   // Form States
   const [form, setForm] = useState({
@@ -149,7 +123,7 @@ const ServiceRequestsList: React.FC = () => {
   }, []);
 
   // Update base fee automatically when service changes
-  const handleServiceChange = (serviceId: string) => {
+  const handleServiceChange = (serviceId) => {
     const selectedService = services.find(s => s.id.toString() === serviceId);
     setForm(f => ({
       ...f,
@@ -174,14 +148,15 @@ const ServiceRequestsList: React.FC = () => {
     setShowModal(true);
   };
 
-  const handleOpenEdit = (request: ServiceRequestItem) => {
+  const handleOpenEdit = (request) => {
     setForm({
       customer_id: request.customer_id.toString(),
       vehicle_id: request.vehicle_id.toString(),
       service_id: request.service_id.toString(),
       amount: request.amount.toString(),
       paid_amount: '0', // Upfront paid is locked on edit
-      remarks: request.remarks || ''
+      remarks: request.remarks || '',
+      payment_mode: 'Cash'
     });
     setModalMode('edit');
     setSelectedRequestId(request.id);
@@ -189,7 +164,7 @@ const ServiceRequestsList: React.FC = () => {
     setShowModal(true);
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setErrorMsg(null);
 
@@ -228,7 +203,7 @@ const ServiceRequestsList: React.FC = () => {
               name: "RTO Ledger System",
               description: "Upfront Service Request Fee",
               order_id: order_id,
-              handler: async function (res: any) {
+              handler: async function (res) {
                 try {
                   const finalResponse = await api.post('/api/requests', {
                     ...form,
@@ -240,7 +215,7 @@ const ServiceRequestsList: React.FC = () => {
                     setShowModal(false);
                     loadRequests();
                   }
-                } catch (saveErr: any) {
+                } catch (saveErr) {
                   setErrorMsg("Payment verified, but request registration failed: " + (saveErr.response?.data?.error || saveErr.message));
                 }
               },
@@ -256,8 +231,8 @@ const ServiceRequestsList: React.FC = () => {
                 color: "#3b82f6"
               }
             };
-            const rzp = new (window as any).Razorpay(options);
-            rzp.on('payment.failed', function (resp: any) {
+            const rzp = new window.Razorpay(options);
+            rzp.on('payment.failed', function (resp) {
               setErrorMsg(`Payment failed: ${resp.error.description || 'Please try again.'}`);
             });
             rzp.open();
@@ -284,13 +259,13 @@ const ServiceRequestsList: React.FC = () => {
           loadRequests();
         }
       }
-    } catch (err: any) {
+    } catch (err) {
       setErrorMsg(err.response?.data?.error || 'Failed to submit request.');
     }
   };
 
   // Change request status instantly
-  const handleStatusChange = async (id: number, status: string) => {
+  const handleStatusChange = async (id, status) => {
     try {
       const response = await api.patch(`/api/requests/${id}/status`, { status });
       if (response.data.success) {
@@ -301,7 +276,7 @@ const ServiceRequestsList: React.FC = () => {
     }
   };
 
-  const handleDelete = async (id: number) => {
+  const handleDelete = async (id) => {
     if (!window.confirm("Delete this request? This will roll back its associated ledger charges and receipts!")) return;
     try {
       const response = await api.delete(`/api/requests/${id}`);
@@ -339,11 +314,11 @@ const ServiceRequestsList: React.FC = () => {
       {/* Database Table */}
       <div className="table-card">
         {loading ? (
-          <div style={{ padding: '40px', textAlignment: 'center' } as React.CSSProperties}>
+          <div style={{ padding: '40px', textAlignment: 'center' }}>
             <h2>Loading Service Requests...</h2>
           </div>
         ) : requests.length === 0 ? (
-          <div style={{ padding: '40px', textAlignment: 'center', color: 'var(--text-secondary)' } as React.CSSProperties}>
+          <div style={{ padding: '40px', textAlignment: 'center', color: 'var(--text-secondary)' }}>
             <AlertTriangle style={{ margin: '0 auto 10px' }} size={32} />
             <p>No service requests found matching search filters.</p>
           </div>

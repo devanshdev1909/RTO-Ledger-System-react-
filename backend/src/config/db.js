@@ -11,7 +11,7 @@ const pool = new Pool({
 // Test database connection on startup
 pool.query("SELECT NOW()", (err, res) => {
     if (err) {
-        console.error("Database connection filed ❌:", err.message);
+        console.error("Database connection failed ❌:", err.message);
     }
     else {
         console.log("Database connected successfully!  Central Time ⏰:", res.rows[0].now);

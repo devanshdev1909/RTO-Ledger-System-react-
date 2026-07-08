@@ -1,35 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import api from '../services/api';
 import { 
-  Search, Printer, X, AlertTriangle, FileText, Calendar 
+  Search, Printer, X, AlertTriangle 
 } from 'lucide-react';
 import './ReceiptsList.css';
 import './VehiclesList.css'; // Inherits shared table and pagination styles
 import { useAuth } from '../context/AuthContext';
 
-interface Receipt {
-  id: number;
-  receipt_no: string;
-  ledger_id: number;
-  amount_received: number;
-  payment_mode: string;
-  transaction_reference: string | null;
-  cashier_name: string;
-  customer_name: string;
-  customer_code: string;
-  customer_mobile: string;
-  customer_address: string | null;
-  vehicle_number: string;
-  vehicle_type: string;
-  request_no: string;
-  service_name: string;
-  remarks: string | null;
-  received_at: string;
-}
 
-const ReceiptsList: React.FC = () => {
+
+const ReceiptsList = () => {
   const { hasPermission } = useAuth();
-  const [receipts, setReceipts] = useState<Receipt[]>([]);
+  const [receipts, setReceipts] = useState([]);
   const [search, setSearch] = useState('');
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
@@ -38,8 +20,8 @@ const ReceiptsList: React.FC = () => {
 
   // Modal Control
   const [showModal, setShowModal] = useState(false);
-  const [selectedReceipt, setSelectedReceipt] = useState<Receipt | null>(null);
-  const [loadingDetail, setLoadingDetail] = useState(false);
+  const [selectedReceipt, setSelectedReceipt] = useState(null);
+
 
   const loadReceipts = async () => {
     setLoading(true);
@@ -63,8 +45,7 @@ const ReceiptsList: React.FC = () => {
     loadReceipts();
   }, [search, page]);
 
-  const handlePrintOpen = async (id: number) => {
-    setLoadingDetail(true);
+  const handlePrintOpen = async (id) => {
     try {
       const response = await api.get(`/api/receipts/${id}`);
       if (response.data.success) {
@@ -73,8 +54,6 @@ const ReceiptsList: React.FC = () => {
       }
     } catch (err) {
       console.error('Failed to load receipt details:', err);
-    } finally {
-      setLoadingDetail(false);
     }
   };
 
@@ -101,11 +80,11 @@ const ReceiptsList: React.FC = () => {
       {/* Main Database Table */}
       <div className="table-card">
         {loading ? (
-          <div style={{ padding: '40px', textAlignment: 'center' } as React.CSSProperties}>
+          <div style={{ padding: '40px', textAlignment: 'center' }}>
             <h2>Loading Payment Log...</h2>
           </div>
         ) : receipts.length === 0 ? (
-          <div style={{ padding: '40px', textAlignment: 'center', color: 'var(--text-secondary)' } as React.CSSProperties}>
+          <div style={{ padding: '40px', textAlignment: 'center', color: 'var(--text-secondary)' }}>
             <AlertTriangle style={{ margin: '0 auto 10px' }} size={32} />
             <p>No payment receipts logged in database.</p>
           </div>

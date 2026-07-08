@@ -3,7 +3,7 @@ import { useAuth } from '../context/AuthContext';
 import api from '../services/api';
 import { 
   Users, Car, Settings, ClipboardList, Clock, 
-  CheckCircle, IndianRupee, PlusCircle, Trash2, X, Plus 
+  CheckCircle, IndianRupee 
 } from 'lucide-react';
 import { Chart as ChartJS, ArcElement, Tooltip, Legend, CategoryScale, LinearScale, PointElement, LineElement, Title } from 'chart.js';
 import { Doughnut, Line } from 'react-chartjs-2';
@@ -12,30 +12,16 @@ import './Dashboard.css';
 // Register Chart.js components
 ChartJS.register(ArcElement, Tooltip, Legend, CategoryScale, LinearScale, PointElement, LineElement, Title);
 
-interface DashboardStats {
-  customers: number;
-  vehicles: number;
-  services: number;
-  requests: number;
-  pendingJobs: number;
-  completedJobs: number;
-  todayRequests: number;
-  revenue: number;
-  dueAmount: number;
-}
 
-interface ServiceItem {
-  id: number;
-  service_name: string;
-}
 
-const Dashboard: React.FC = () => {
+
+const Dashboard = () => {
   const { user, logout } = useAuth();
   
   // Dashboard state
-  const [stats, setStats] = useState<DashboardStats | null>(null);
-  const [chartData, setChartData] = useState<any>(null);
-  const [servicesList, setServicesList] = useState<ServiceItem[]>([]);
+  const [stats, setStats] = useState(null);
+  const [chartData, setChartData] = useState(null);
+
   const [loading, setLoading] = useState(true);
 
 
@@ -47,7 +33,7 @@ const Dashboard: React.FC = () => {
       if (response.data.success) {
         setStats(response.data.stats);
         setChartData(response.data.chartData);
-        setServicesList(response.data.services || []);
+
       }
     } catch (err) {
       console.error('Failed to load dashboard data:', err);
@@ -97,8 +83,8 @@ const Dashboard: React.FC = () => {
     }],
   };
 
-  const timeLabels = chartData?.requestsOverTime?.map((r: any) => r.date_label) || [];
-  const requestCounts = chartData?.requestsOverTime?.map((r: any) => parseInt(r.count, 10)) || [];
+  const timeLabels = chartData?.requestsOverTime?.map((r) => r.date_label) || [];
+  const requestCounts = chartData?.requestsOverTime?.map((r) => parseInt(r.count, 10)) || [];
   
   const requestsOverTimeData = {
     labels: timeLabels,
@@ -136,49 +122,49 @@ const Dashboard: React.FC = () => {
         {/* Stats Grid Cards */}
         <div className="stats-grid">
           
-          <div className="stat-card" style={{ '--card-color': '#f59e0b' } as React.CSSProperties}>
+          <div className="stat-card" style={{ '--card-color': '#f59e0b' }}>
             <h3>Total Customers</h3>
             <div className="stat-value">{stats.customers}</div>
             <span className="stat-icon"><Users size={24} /></span>
           </div>
 
-          <div className="stat-card" style={{ '--card-color': '#10b981' } as React.CSSProperties}>
+          <div className="stat-card" style={{ '--card-color': '#10b981' }}>
             <h3>Total Vehicles</h3>
             <div className="stat-value">{stats.vehicles}</div>
             <span className="stat-icon"><Car size={24} /></span>
           </div>
 
-          <div className="stat-card" style={{ '--card-color': '#6366f1' } as React.CSSProperties}>
+          <div className="stat-card" style={{ '--card-color': '#6366f1' }}>
             <h3>Active Services</h3>
             <div className="stat-value">{stats.services}</div>
             <span className="stat-icon"><Settings size={24} /></span>
           </div>
 
-          <div className="stat-card" style={{ '--card-color': 'var(--button-color)' } as React.CSSProperties}>
+          <div className="stat-card" style={{ '--card-color': 'var(--button-color)' }}>
             <h3>Total Requests</h3>
             <div className="stat-value">{stats.requests}</div>
             <span className="stat-icon"><ClipboardList size={24} /></span>
           </div>
 
-          <div className="stat-card" style={{ '--card-color': '#ef4444' } as React.CSSProperties}>
+          <div className="stat-card" style={{ '--card-color': '#ef4444' }}>
             <h3>Pending Jobs</h3>
             <div className="stat-value">{stats.pendingJobs}</div>
             <span className="stat-icon"><Clock size={24} /></span>
           </div>
 
-          <div className="stat-card" style={{ '--card-color': '#10b981' } as React.CSSProperties}>
+          <div className="stat-card" style={{ '--card-color': '#10b981' }}>
             <h3>Completed Jobs</h3>
             <div className="stat-value">{stats.completedJobs}</div>
             <span className="stat-icon"><CheckCircle size={24} /></span>
           </div>
 
-          <div className="stat-card" style={{ '--card-color': '#059669' } as React.CSSProperties}>
+          <div className="stat-card" style={{ '--card-color': '#059669' }}>
             <h3>Total Revenue</h3>
             <div className="stat-value">₹{stats.revenue.toLocaleString('en-IN')}</div>
             <span className="stat-icon"><IndianRupee size={24} /></span>
           </div>
 
-          <div className="stat-card" style={{ '--card-color': '#ef4444' } as React.CSSProperties}>
+          <div className="stat-card" style={{ '--card-color': '#ef4444' }}>
             <h3>Outstanding Dues</h3>
             <div className="stat-value">₹{stats.dueAmount.toLocaleString('en-IN')}</div>
             <span className="stat-icon"><IndianRupee size={24} /></span>

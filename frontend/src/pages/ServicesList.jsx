@@ -8,25 +8,19 @@ import './ServicesList.css';
 import './VehiclesList.css'; // Shared table structures
 import { useAuth } from '../context/AuthContext';
 
-interface RtoService {
-  id: number;
-  service_name: string;
-  default_fee: number;
-  description: string | null;
-  is_active: boolean;
-}
 
-const ServicesList: React.FC = () => {
+
+const ServicesList = () => {
   const { hasPermission } = useAuth();
-  const [services, setServices] = useState<RtoService[]>([]);
+  const [services, setServices] = useState([]);
   const [search, setSearch] = useState('');
   const [loading, setLoading] = useState(true);
 
   // Modal Control
   const [showModal, setShowModal] = useState(false);
-  const [modalMode, setModalMode] = useState<'create' | 'edit'>('create');
-  const [selectedServiceId, setSelectedServiceId] = useState<number | null>(null);
-  const [errorMsg, setErrorMsg] = useState<string | null>(null);
+  const [modalMode, setModalMode] = useState('create');
+  const [selectedServiceId, setSelectedServiceId] = useState(null);
+  const [errorMsg, setErrorMsg] = useState(null);
 
   // Form States
   const [form, setForm] = useState({
@@ -60,7 +54,7 @@ const ServicesList: React.FC = () => {
     setShowModal(true);
   };
 
-  const handleOpenEdit = (service: RtoService) => {
+  const handleOpenEdit = (service) => {
     setForm({
       service_name: service.service_name,
       default_fee: service.default_fee.toString(),
@@ -72,7 +66,7 @@ const ServicesList: React.FC = () => {
     setShowModal(true);
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setErrorMsg(null);
 
@@ -108,12 +102,12 @@ const ServicesList: React.FC = () => {
           loadServices();
         }
       }
-    } catch (err: any) {
+    } catch (err) {
       setErrorMsg(err.response?.data?.error || 'Operation failed. Verify input details.');
     }
   };
 
-  const handleToggleStatus = async (id: number, currentStatus: boolean) => {
+  const handleToggleStatus = async (id, currentStatus) => {
     try {
       const response = await api.patch(`/api/services/${id}/status`, {
         is_active: !currentStatus
@@ -126,14 +120,14 @@ const ServicesList: React.FC = () => {
     }
   };
 
-  const handleDelete = async (id: number) => {
+  const handleDelete = async (id) => {
     if (!window.confirm("Permanently delete this service from catalog? This will fail if it's already used in active service requests!")) return;
     try {
       const response = await api.delete(`/api/services/${id}`);
       if (response.data.success) {
         loadServices();
       }
-    } catch (err: any) {
+    } catch (err) {
       alert(err.response?.data?.error || 'Failed to delete service.');
     }
   };
@@ -170,11 +164,11 @@ const ServicesList: React.FC = () => {
       {/* Main Database Table */}
       <div className="table-card">
         {loading ? (
-          <div style={{ padding: '40px', textAlignment: 'center' } as React.CSSProperties}>
+          <div style={{ padding: '40px', textAlignment: 'center' }}>
             <h2>Loading RTO Services Catalog...</h2>
           </div>
         ) : filteredServices.length === 0 ? (
-          <div style={{ padding: '40px', textAlignment: 'center', color: 'var(--text-secondary)' } as React.CSSProperties}>
+          <div style={{ padding: '40px', textAlignment: 'center', color: 'var(--text-secondary)' }}>
             <AlertTriangle style={{ margin: '0 auto 10px' }} size={32} />
             <p>No services catalog records found.</p>
           </div>

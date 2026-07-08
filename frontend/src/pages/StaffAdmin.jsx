@@ -7,65 +7,43 @@ import './StaffAdmin.css';
 import './LedgerList.css'; // Inherits button design systems
 import '../components/Layout.css'; // Inherits card overlays and standard layout frames
 
-interface StaffUser {
-  id: number;
-  username: string;
-  email: string;
-  role_name: string;
-}
 
-interface SystemRole {
-  id: number;
-  name: string;
-  description: string;
-}
 
-interface SystemPermission {
-  id: number;
-  code: string;
-  description: string;
-}
 
-interface AllottedCustomer {
-  id: number;
-  name: string;
-  customer_code: string;
-}
 
-interface Agent {
-  id: number;
-  username: string;
-  email: string;
-  allottedCustomers: AllottedCustomer[];
-}
 
-const StaffAdmin: React.FC = () => {
-  const [activeTab, setActiveTab] = useState<'allotments' | 'users' | 'roles'>('allotments');
+
+
+
+
+
+const StaffAdmin = () => {
+  const [activeTab, setActiveTab] = useState('allotments');
   const [loading, setLoading] = useState(true);
 
   // Core configurations datasets
-  const [users, setUsers] = useState<StaffUser[]>([]);
-  const [roles, setRoles] = useState<SystemRole[]>([]);
-  const [permissions, setPermissions] = useState<SystemPermission[]>([]);
-  const [agents, setAgents] = useState<Agent[]>([]);
-  const [unassignedCustomers, setUnassignedCustomers] = useState<AllottedCustomer[]>([]);
+  const [users, setUsers] = useState([]);
+  const [roles, setRoles] = useState([]);
+  const [permissions, setPermissions] = useState([]);
+  const [agents, setAgents] = useState([]);
+  const [unassignedCustomers, setUnassignedCustomers] = useState([]);
 
   // Selection references
-  const [selectedUserId, setSelectedUserId] = useState<number | null>(null);
-  const [selectedRoleId, setSelectedRoleId] = useState<number | null>(null);
-  const [selectedAgentId, setSelectedAgentId] = useState<number | null>(null);
+  const [selectedUserId, setSelectedUserId] = useState(null);
+  const [selectedRoleId, setSelectedRoleId] = useState(null);
+  const [selectedAgentId, setSelectedAgentId] = useState(null);
 
   // Active checkboxes arrays
-  const [userCheckedPerms, setUserCheckedPerms] = useState<number[]>([]);
-  const [roleCheckedPerms, setRoleCheckedPerms] = useState<number[]>([]);
+  const [userCheckedPerms, setUserCheckedPerms] = useState([]);
+  const [roleCheckedPerms, setRoleCheckedPerms] = useState([]);
 
-  const [message, setMessage] = useState<{ type: 'success' | 'error', text: string } | null>(null);
+  const [message, setMessage] = useState(null);
 
   // Creation Modals Toggles
   const [showUserModal, setShowUserModal] = useState(false);
   const [showRoleModal, setShowRoleModal] = useState(false);
-  const [prelockedRoleName, setPrelockedRoleName] = useState<string | null>(null);
-  const [modalError, setModalError] = useState<string | null>(null);
+  const [prelockedRoleName, setPrelockedRoleName] = useState(null);
+  const [modalError, setModalError] = useState(null);
 
   // Add User Form details
   const [userForm, setUserForm] = useState({
@@ -122,7 +100,7 @@ const StaffAdmin: React.FC = () => {
     loadData();
   }, [activeTab]);
 
-  const handleUserSelect = async (userId: number) => {
+  const handleUserSelect = async (userId) => {
     setSelectedUserId(userId);
     setMessage(null);
     try {
@@ -135,7 +113,7 @@ const StaffAdmin: React.FC = () => {
     }
   };
 
-  const handleRoleSelect = async (roleId: number) => {
+  const handleRoleSelect = async (roleId) => {
     setSelectedRoleId(roleId);
     setMessage(null);
     try {
@@ -148,13 +126,13 @@ const StaffAdmin: React.FC = () => {
     }
   };
 
-  const handleUserCheckboxChange = (permId: number) => {
+  const handleUserCheckboxChange = (permId) => {
     setUserCheckedPerms(prev => 
       prev.includes(permId) ? prev.filter(id => id !== permId) : [...prev, permId]
     );
   };
 
-  const handleRoleCheckboxChange = (permId: number) => {
+  const handleRoleCheckboxChange = (permId) => {
     setRoleCheckedPerms(prev => 
       prev.includes(permId) ? prev.filter(id => id !== permId) : [...prev, permId]
     );
@@ -188,7 +166,7 @@ const StaffAdmin: React.FC = () => {
     }
   };
 
-  const handleAllot = async (customerId: number) => {
+  const handleAllot = async (customerId) => {
     if (!selectedAgentId) return;
     try {
       const response = await api.post('/api/admin/agents/allot', {
@@ -198,24 +176,24 @@ const StaffAdmin: React.FC = () => {
       if (response.data.success) {
         loadData(true);
       }
-    } catch (err: any) {
+    } catch (err) {
       alert(err.response?.data?.error || err.message || "Failed to allot customer.");
     }
   };
 
-  const handleUnallot = async (customerId: number) => {
+  const handleUnallot = async (customerId) => {
     try {
       const response = await api.post('/api/admin/agents/unallot', { customer_id: customerId });
       if (response.data.success) {
         loadData(true);
       }
-    } catch (err: any) {
+    } catch (err) {
       alert(err.response?.data?.error || err.message || "Failed to unallot customer.");
     }
   };
 
   // Open creation modal
-  const handleOpenAddUser = (prelockRole?: string) => {
+  const handleOpenAddUser = (prelockRole) => {
     setPrelockedRoleName(prelockRole || null);
     setModalError(null);
     
@@ -236,7 +214,7 @@ const StaffAdmin: React.FC = () => {
   };
 
   // User/Agent account submit
-  const handleUserSubmit = async (e: React.FormEvent) => {
+  const handleUserSubmit = async (e) => {
     e.preventDefault();
     setModalError(null);
 
@@ -253,7 +231,7 @@ const StaffAdmin: React.FC = () => {
       return;
     }
 
-    if (!userForm.password_hash || userForm.password_hash.length < 6) {
+    if (!userForm.password || userForm.password.length < 6) {
       setModalError("Password must be at least 6 characters long.");
       return;
     }
@@ -273,13 +251,13 @@ const StaffAdmin: React.FC = () => {
         setShowUserModal(false);
         loadData();
       }
-    } catch (err: any) {
+    } catch (err) {
       setModalError(err.response?.data?.error || "Failed to create user account.");
     }
   };
 
   // Role profile submit
-  const handleRoleSubmit = async (e: React.FormEvent) => {
+  const handleRoleSubmit = async (e) => {
     e.preventDefault();
     setModalError(null);
 
@@ -298,7 +276,7 @@ const StaffAdmin: React.FC = () => {
         setShowRoleModal(false);
         loadData();
       }
-    } catch (err: any) {
+    } catch (err) {
       setModalError(err.response?.data?.error || "Failed to create role profile.");
     }
   };
@@ -507,7 +485,7 @@ const StaffAdmin: React.FC = () => {
                   </div>
                 </div>
               ) : (
-                <div style={{ padding: '40px', textAlign: 'center' } as React.CSSProperties}>
+                <div style={{ padding: '40px', textAlign: 'center' }}>
                   <p style={{ color: 'var(--text-secondary)' }}>Add an Agent role and staff users to start managing allotments.</p>
                 </div>
               )

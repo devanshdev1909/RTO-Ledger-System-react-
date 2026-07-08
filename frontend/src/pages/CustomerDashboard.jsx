@@ -1,89 +1,37 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import api from '../services/api';
 import { 
   Car, ClipboardList, IndianRupee, LogOut, 
-  Printer, X, AlertTriangle, CheckCircle, Clock 
+  Printer, X, Clock 
 } from 'lucide-react';
 import './CustomerDashboard.css';
 import './ReceiptsList.css'; // Reuses invoice slip visual styling rules
 import '../components/Layout.css'; // Reuses sidebar and main container layout css rules
 
-interface Vehicle {
-  id: number;
-  vehicle_number: string;
-  vehicle_type: string;
-  chassis_number: string | null;
-  engine_number: string | null;
-  registration_date: string | null;
-  driver_name: string | null;
-}
-
-interface ServiceRequest {
-  id: number;
-  request_no: string;
-  service_name: string;
-  vehicle_number: string;
-  status: string;
-  remarks: string | null;
-  created_at: string;
-}
-
-interface LedgerRecord {
-  id: number;
-  request_no: string;
-  service_name: string;
-  vehicle_number: string;
-  service_fee: number;
-  amount_paid: number;
-  due_amount: number;
-  status: string;
-}
-
-interface Receipt {
-  id: number;
-  receipt_no: string;
-  amount_received: number;
-  payment_mode: string;
-  remarks: string | null;
-  received_at: string;
-  request_no: string;
-  service_name: string;
-  vehicle_number: string;
-}
-
-interface CustomerProfile {
-  id: number;
-  name: string;
-  customer_code: string;
-  mobile: string;
-  email: string | null;
-  address: string | null;
-}
-
-const CustomerDashboard: React.FC = () => {
+const CustomerDashboard = () => {
   const { customer, logout } = useAuth();
   
   // Tab control
-  const [activeTab, setActiveTab] = useState<'overview' | 'vehicles' | 'requests' | 'billing'>('overview');
+  const [activeTab, setActiveTab] = useState('overview');
   
   // Data States
-  const [profile, setProfile] = useState<CustomerProfile | null>(null);
-  const [vehicles, setVehicles] = useState<Vehicle[]>([]);
-  const [requests, setRequests] = useState<ServiceRequest[]>([]);
-  const [ledgers, setLedgers] = useState<LedgerRecord[]>([]);
-  const [receipts, setReceipts] = useState<Receipt[]>([]);
+  const [profile, setProfile] = useState(null);
+  const [vehicles, setVehicles] = useState([]);
+  const [requests, setRequests] = useState([]);
+  const [ledgers, setLedgers] = useState([]);
+  const [receipts, setReceipts] = useState([]);
   const [loading, setLoading] = useState(true);
 
   // Printing Receipt Modal
   const [showModal, setShowModal] = useState(false);
-  const [selectedReceipt, setSelectedReceipt] = useState<Receipt | null>(null);
+  const [selectedReceipt, setSelectedReceipt] = useState(null);
 
   // Online Payment States
   const [showPayModal, setShowPayModal] = useState(false);
-  const [paymentLedger, setPaymentLedger] = useState<LedgerRecord | null>(null);
+  const [paymentLedger, setPaymentLedger] = useState(null);
   const [paymentAmount, setPaymentAmount] = useState('');
-  const [paymentError, setPaymentError] = useState<string | null>(null);
+  const [paymentError, setPaymentError] = useState(null);
   const [paymentProcessing, setPaymentProcessing] = useState(false);
 
   // Fetch portal data
@@ -128,13 +76,13 @@ const CustomerDashboard: React.FC = () => {
   const totalDues = ledgers.reduce((sum, current) => sum + parseFloat(current.due_amount.toString()), 0);
   const totalPaid = ledgers.reduce((sum, current) => sum + parseFloat(current.amount_paid.toString()), 0);
 
-  const handlePrintOpen = (receipt: Receipt) => {
+  const handlePrintOpen = (receipt) => {
     setSelectedReceipt(receipt);
     setShowModal(true);
   };
 
   // Open Payment dialog
-  const handleOpenPayment = (ledger: LedgerRecord) => {
+  const handleOpenPayment = (ledger) => {
     setPaymentLedger(ledger);
     setPaymentAmount(ledger.due_amount.toString());
     setPaymentError(null);
@@ -142,7 +90,7 @@ const CustomerDashboard: React.FC = () => {
   };
 
   // Process secure payment creation & checkout
-  const handleProceedPayment = async (e: React.FormEvent) => {
+  const handleProceedPayment = async (e) => {
     e.preventDefault();
     setPaymentError(null);
     
@@ -179,7 +127,7 @@ const CustomerDashboard: React.FC = () => {
           name: "RTO Ledger System",
           description: `Fee Payment for request #${paymentLedger.request_no}`,
           order_id: order_id,
-          handler: async function (res: any) {
+          handler: async function (res) {
             try {
               setPaymentProcessing(true);
               const verifyRes = await api.post('/api/portal/payments/verify-payment', {
@@ -197,7 +145,7 @@ const CustomerDashboard: React.FC = () => {
               } else {
                 alert("Payment verification failed! Please contact support with reference: " + res.razorpay_payment_id);
               }
-            } catch (verifyErr: any) {
+            } catch (verifyErr) {
               console.error("Verification error:", verifyErr);
               alert("Error verifying payment signature: " + (verifyErr.response?.data?.error || verifyErr.message));
             } finally {
@@ -218,14 +166,14 @@ const CustomerDashboard: React.FC = () => {
           }
         };
 
-        const rzp = new (window as any).Razorpay(options);
-        rzp.on('payment.failed', function (resp: any) {
+        const rzp = new window.Razorpay(options);
+        rzp.on('payment.failed', function (resp) {
           alert(`Payment transaction failed!\nReason: ${resp.error.description}`);
         });
 
         rzp.open();
       }
-    } catch (err: any) {
+    } catch (err) {
       setPaymentError(err.response?.data?.error || err.message || "Failed to initiate online transaction.");
     } finally {
       setPaymentProcessing(false);

@@ -4,28 +4,17 @@ import { X, Trash2, PlusCircle } from 'lucide-react';
 import { formatVehicleNumber, formatChassisOrEngine } from '../utils/formatters';
 import '../pages/Dashboard.css'; // Reuse CSS rules for Quick Add
 
-interface QuickAddModalProps {
-  isOpen: boolean;
-  onClose: () => void;
-}
-
-interface ServiceItem {
-  id: number;
-  service_name: string;
-  default_fee: number;
-}
-
-const QuickAddModal: React.FC<QuickAddModalProps> = ({ isOpen, onClose }) => {
-  const [servicesList, setServicesList] = useState<ServiceItem[]>([]);
-  const [quickAddError, setQuickAddError] = useState<string | null>(null);
+const QuickAddModal = ({ isOpen, onClose }) => {
+  const [servicesList, setServicesList] = useState([]);
+  const [quickAddError, setQuickAddError] = useState(null);
   const [quickAddLoading, setQuickAddLoading] = useState(false);
   const [quickAddSuccess, setQuickAddSuccess] = useState(false);
-  const [receiptIds, setReceiptIds] = useState<number[]>([]);
+  const [receiptIds, setReceiptIds] = useState([]);
 
   // Form Data States
   const [customerForm, setCustomerForm] = useState({ name: '', mobile: '', email: '', address: '' });
-  const [vehiclesForm, setVehiclesForm] = useState<any[]>([{ index: 0, vehicle_number: '', vehicle_type: '2 Wheeler', chassis_number: '', engine_number: '', registration_date: '' }]);
-  const [servicesForm, setServicesForm] = useState<any[]>([{ vehicle_index: 0, service_id: '', service_fee: '', paid_amount: '', payment_mode: 'Cash' }]);
+  const [vehiclesForm, setVehiclesForm] = useState([{ index: 0, vehicle_number: '', vehicle_type: '2 Wheeler', chassis_number: '', engine_number: '', registration_date: '' }]);
+  const [servicesForm, setServicesForm] = useState([{ vehicle_index: 0, service_id: '', service_fee: '', paid_amount: '', payment_mode: 'Cash' }]);
 
   // Load services catalog list on open
   useEffect(() => {
@@ -49,7 +38,7 @@ const QuickAddModal: React.FC<QuickAddModalProps> = ({ isOpen, onClose }) => {
     setVehiclesForm([...vehiclesForm, { index: nextIndex, vehicle_number: '', vehicle_type: '2 Wheeler', chassis_number: '', engine_number: '', registration_date: '' }]);
   };
 
-  const handleRemoveVehicleField = (index: number) => {
+  const handleRemoveVehicleField = (index) => {
     if (vehiclesForm.length === 1) return;
     const updated = vehiclesForm.filter((_, i) => i !== index).map((v, i) => ({ ...v, index: i }));
     setVehiclesForm(updated);
@@ -64,7 +53,7 @@ const QuickAddModal: React.FC<QuickAddModalProps> = ({ isOpen, onClose }) => {
     setServicesForm(updatedServices);
   };
 
-  const handleServiceChange = (index: number, field: string, value: any) => {
+  const handleServiceChange = (index, field, value) => {
     const updated = [...servicesForm];
     updated[index][field] = value;
 
@@ -83,12 +72,12 @@ const QuickAddModal: React.FC<QuickAddModalProps> = ({ isOpen, onClose }) => {
     setServicesForm([...servicesForm, { vehicle_index: 0, service_id: '', service_fee: '', paid_amount: '', payment_mode: 'Cash' }]);
   };
 
-  const handleRemoveServiceField = (index: number) => {
+  const handleRemoveServiceField = (index) => {
     if (servicesForm.length === 1) return;
     setServicesForm(servicesForm.filter((_, i) => i !== index));
   };
 
-  const handleQuickAddSubmit = async (e: React.FormEvent) => {
+  const handleQuickAddSubmit = async (e) => {
     e.preventDefault();
     setQuickAddError(null);
     setQuickAddLoading(true);
@@ -173,7 +162,7 @@ const QuickAddModal: React.FC<QuickAddModalProps> = ({ isOpen, onClose }) => {
         // Dispatch global success event so active pages refresh data
         window.dispatchEvent(new CustomEvent('quick-add-success'));
       }
-    } catch (err: any) {
+    } catch (err) {
       setQuickAddError(err.response?.data?.error || 'Failed to submit Quick Add registration.');
     } finally {
       setQuickAddLoading(false);
@@ -218,7 +207,7 @@ const QuickAddModal: React.FC<QuickAddModalProps> = ({ isOpen, onClose }) => {
 
             {!quickAddSuccess ? (
               <>
-                {/* 👤 STAGE 1: CUSTOMER DETAILS */}
+                {/* 👤 STAGE 1 DETAILS */}
                 <div className="form-section-title">1. Customer Information</div>
                 <div className="nested-list-item">
                   <div className="form-row">

@@ -16,15 +16,15 @@ import CustomerDashboard from './pages/CustomerDashboard';
 import StaffAdmin from './pages/StaffAdmin';
 
 
-// 1. A Helper Component to protect Staff routes
-const ProtectedStaffRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+// Helper Component to protect Staff routes
+const ProtectedStaffRoute = ({ children }) => {
   const { user, userType, loading } = useAuth();
 
   if (loading) {
     return <div className="loading-screen">Loading RTO Ledger...</div>;
   }
 
-  // If not logged in, or logged in as customer, redirect to login
+  // If not logged in, or logged in, redirect to login
   if (!user || userType !== 'staff') {
     return <Navigate to="/login" replace />;
   }
@@ -32,8 +32,8 @@ const ProtectedStaffRoute: React.FC<{ children: React.ReactNode }> = ({ children
   return <>{children}</>;
 };
 
-// 2. A Helper Component to protect Customer routes
-const ProtectedCustomerRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+// Helper Component to protect Customer routes
+const ProtectedCustomerRoute = ({ children }) => {
   const { customer, userType, loading } = useAuth();
 
   if (loading) {
@@ -47,8 +47,8 @@ const ProtectedCustomerRoute: React.FC<{ children: React.ReactNode }> = ({ child
   return <>{children}</>;
 };
 
-// 3. The Main App Router Component
-const AppContent: React.FC = () => {
+// The Main App Router Component
+const AppContent = () => {
   const { userType, loading } = useAuth();
 
   // Show a loading screen while checking active session cookie on load
@@ -154,8 +154,8 @@ const AppContent: React.FC = () => {
   );
 };
 
-// 4. Wrap everything in the AuthProvider
-const App: React.FC = () => {
+// Wrap everything in the AuthProvider
+const App = () => {
   return (
     <AuthProvider>
       <AppContent />

@@ -3,11 +3,11 @@ import { useAuth } from '../context/AuthContext';
 import { Car } from 'lucide-react';
 import './Login.css';
 
-const Login: React.FC = () => {
+const Login = () => {
   const { loginStaff, loginCustomer, error, setError, loading } = useAuth();
 
   // Active form view ('customer' or 'staff')
-  const [activeTab, setActiveTab] = useState<'customer' | 'staff'>('customer');
+  const [activeTab, setActiveTab] = useState('customer');
 
   // Input states
   const [identifier, setIdentifier] = useState(''); // Mobile/Email for customer
@@ -17,14 +17,14 @@ const Login: React.FC = () => {
   // Password visibility toggler
   const [showPassword, setShowPassword] = useState(false);
 
-  const handleTabChange = (tab: 'customer' | 'staff') => {
+  const handleTabChange = (tab) => {
     setActiveTab(tab);
     setError(null);         // Reset errors on switch
     setPassword('');        // Clear password
     setShowPassword(false); // Reset eye icon
   };
 
-  const handleLoginSubmit = async (e: React.FormEvent) => {
+  const handleLoginSubmit = async (e) => {
     e.preventDefault();
     try {
       if (activeTab === 'staff') {
@@ -126,7 +126,7 @@ const Login: React.FC = () => {
               style={{ background: '#1c37a2ff', marginTop: '10px' }}
               disabled={loading}
             >
-              {loading ? "Logging in..." : "Login as Customer →"}
+              {loading ? "Logging in..." : "Login →"}
             </button>
 
             <div className="customer-register-link">
@@ -185,7 +185,7 @@ const Login: React.FC = () => {
               style={{ background: '#1c37a2ff', marginTop: '10px' }}
               disabled={loading}
             >
-              {loading ? "Logging in..." : "Login as Staff →"}
+              {loading ? "Logging in..." : "Login →"}
             </button>
           </form>
 

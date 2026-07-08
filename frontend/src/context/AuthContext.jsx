@@ -1,44 +1,17 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import { createContext, useContext, useState, useEffect } from 'react';
 import api from '../services/api';
 
-// 1. Define types for our data (TypeScript validation)
-export interface User {
-  id: number;
-  username: string;
-  role: string;
-  email?: string;
-}
+// Create the Context
+const AuthContext = createContext(undefined);
 
-export interface Customer {
-  id: number;
-  name: string;
-}
-
-interface AuthContextType {
-  user: User | null;
-  customer: Customer | null;
-  userType: 'staff' | 'customer' | null;
-  permissions: string[];
-  loading: boolean;
-  loginStaff: (email: string, password: string) => Promise<void>;
-  loginCustomer: (identifier: string, password: string) => Promise<void>;
-  logout: () => Promise<void>;
-  error: string | null;
-  setError: (error: string | null) => void;
-  hasPermission: (permissionCode: string) => boolean;
-}
-
-// 2. Create the Context
-const AuthContext = createContext<AuthContextType | undefined>(undefined);
-
-// 3. Create the Provider Component
-export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [user, setUser] = useState<User | null>(null);
-  const [customer, setCustomer] = useState<Customer | null>(null);
-  const [userType, setUserType] = useState<'staff' | 'customer' | null>(null);
-  const [permissions, setPermissions] = useState<string[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
+// Create the Provider Component
+export const AuthProvider = ({ children }) => {
+  const [user, setUser] = useState(null);
+  const [customer, setCustomer] = useState(null);
+  const [userType, setUserType] = useState(null);
+  const [permissions, setPermissions] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   // Check if session cookie is active on page load
   const checkSession = async () => {
@@ -67,7 +40,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   }, []);
 
   // Staff Login Handler
-  const loginStaff = async (email: string, password: string) => {
+  const loginStaff = async (email, password) => {
     setError(null);
     setLoading(true);
     try {
@@ -77,7 +50,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         setUserType('staff');
         setPermissions(response.data.permissions || []);
       }
-    } catch (err: any) {
+    } catch (err) {
       setError(err.response?.data?.error || 'Staff login failed. Please try again.');
       throw err;
     } finally {
@@ -86,7 +59,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   // Customer Login Handler
-  const loginCustomer = async (identifier: string, password: string) => {
+  const loginCustomer = async (identifier, password) => {
     setError(null);
     setLoading(true);
     try {
@@ -96,7 +69,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         setUserType('customer');
         setPermissions([]);
       }
-    } catch (err: any) {
+    } catch (err) {
       setError(err.response?.data?.error || 'Customer login failed. Please try again.');
       throw err;
     } finally {
@@ -120,7 +93,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
-  const hasPermission = (permissionCode: string): boolean => {
+  const hasPermission = (permissionCode) => {
     if (user?.role === 'Admin') return true;
     return permissions.includes(permissionCode);
   };
@@ -146,7 +119,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   );
 };
 
-// 4. Custom Hook to use AuthContext
+// Custom Hook to use AuthContext
 export const useAuth = () => {
   const context = useContext(AuthContext);
   if (!context) {

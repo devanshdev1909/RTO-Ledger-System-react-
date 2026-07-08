@@ -1,22 +1,22 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
 import api from '../services/api';
 import './Login.css'; // Reuse premium layout classes
 
-const Activate: React.FC = () => {
+const Register = () => {
   const navigate = useNavigate();
-  const { setError } = useAuth();
 
-  const [identifier, setIdentifier] = useState('');
+  const [name, setName] = useState('');
+  const [mobile, setMobile] = useState('');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   
   const [loading, setLoading] = useState(false);
-  const [successMsg, setSuccessMsg] = useState<string | null>(null);
-  const [errorMsg, setErrorMsg] = useState<string | null>(null);
+  const [successMsg, setSuccessMsg] = useState(null);
+  const [errorMsg, setErrorMsg] = useState(null);
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setErrorMsg(null);
     setSuccessMsg(null);
@@ -26,21 +26,28 @@ const Activate: React.FC = () => {
       return;
     }
 
+    if (!/^[0-9]{10}$/.test(mobile)) {
+      setErrorMsg("Please enter a valid 10-digit mobile number.");
+      return;
+    }
+
     setLoading(true);
     try {
-      const response = await api.post('/api/portal/activate', {
-        identifier,
+      const response = await api.post('/api/portal/register', {
+        name,
+        mobile,
+        email: email || null,
         password,
         confirm_password: confirmPassword
       });
       if (response.data.success) {
-        setSuccessMsg("Account activated successfully! Redirecting to login...");
+        setSuccessMsg("Registration successful! Redirecting to login...");
         setTimeout(() => {
           navigate('/login');
         }, 2000);
       }
-    } catch (err: any) {
-      setErrorMsg(err.response?.data?.error || "Failed to activate account. Verify your email or mobile number.");
+    } catch (err) {
+      setErrorMsg(err.response?.data?.error || "Registration failed. Try again.");
     } finally {
       setLoading(false);
     }
@@ -51,13 +58,13 @@ const Activate: React.FC = () => {
       <div className="background-shape shape-1"></div>
       <div className="background-shape shape-2"></div>
 
-      <div className="login-container">
+      <div className="login-container" style={{ margin: '40px auto' }}>
         <div className="login-card">
           
           <div className="logo-section reg-header">
-            <div className="logo-icon">🔑</div>
-            <h1>Activate Account</h1>
-            <p>Set a password for your staff-created portal profile</p>
+            <div className="logo-icon">📝</div>
+            <h1>Customer Registration</h1>
+            <p>Create a secure portal account to track your vehicles and dues</p>
           </div>
 
           {errorMsg && <div className="error-banner">{errorMsg}</div>}
@@ -66,26 +73,54 @@ const Activate: React.FC = () => {
           <form onSubmit={handleSubmit} className="form-content active">
             
             <div className="form-group-sm">
-              <label>Email Address or Mobile Number *</label>
+              <label>Full Name *</label>
               <div className="input-icon-wrap">
-                <span className="input-icon">📧</span>
+                <span className="input-icon">👤</span>
                 <input
                   type="text"
-                  placeholder="Enter registered email or mobile"
-                  value={identifier}
-                  onChange={(e) => setIdentifier(e.target.value)}
+                  placeholder="Enter your full name"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
                   required
                 />
               </div>
             </div>
 
             <div className="form-group-sm">
-              <label>Create Password *</label>
+              <label>10-Digit Mobile Number *</label>
+              <div className="input-icon-wrap">
+                <span className="input-icon">📱</span>
+                <input
+                  type="tel"
+                  maxLength={10}
+                  placeholder="Enter mobile number"
+                  value={mobile}
+                  onChange={(e) => setMobile(e.target.value)}
+                  required
+                />
+              </div>
+            </div>
+
+            <div className="form-group-sm">
+              <label>Email Address</label>
+              <div className="input-icon-wrap">
+                <span className="input-icon">✉️</span>
+                <input
+                  type="email"
+                  placeholder="Enter email address"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                />
+              </div>
+            </div>
+
+            <div className="form-group-sm">
+              <label>Password *</label>
               <div className="input-icon-wrap">
                 <span className="input-icon">🔒</span>
                 <input
                   type="password"
-                  placeholder="Enter new password"
+                  placeholder="Create password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
@@ -99,7 +134,7 @@ const Activate: React.FC = () => {
                 <span className="input-icon">🔒</span>
                 <input
                   type="password"
-                  placeholder="Confirm new password"
+                  placeholder="Confirm password"
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
                   required
@@ -110,15 +145,15 @@ const Activate: React.FC = () => {
             <button 
               type="submit" 
               className="login-btn" 
-              style={{ background: '#10b981', marginTop: '15px' }}
+              style={{ background: '#3b82f6', marginTop: '15px' }}
               disabled={loading}
             >
-              {loading ? "Activating..." : "Activate Account ✓"}
+              {loading ? "Registering..." : "Create Portal Account →"}
             </button>
 
             <div className="customer-register-link" style={{ textAlign: 'center', marginTop: '15px' }}>
-              <span>Already active? </span>
-              <Link to="/login">Back to Login</Link>
+              <span>Already have an account? </span>
+              <Link to="/login">Sign In</Link>
             </div>
           </form>
 
@@ -128,4 +163,4 @@ const Activate: React.FC = () => {
   );
 };
 
-export default Activate;
+export default Register;

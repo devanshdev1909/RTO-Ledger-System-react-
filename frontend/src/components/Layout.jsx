@@ -9,14 +9,14 @@ import {
 import QuickAddModal from './QuickAddModal';
 import './Layout.css';
 
-const Layout: React.FC = () => {
+const Layout = () => {
   const { user, logout, hasPermission } = useAuth();
   const location = useLocation();
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [showQuickAdd, setShowQuickAdd] = useState(false);
 
   // Helper to check active link
-  const isActive = (path: string) => {
+  const isActive = (path) => {
     return location.pathname === path;
   };
 
@@ -38,7 +38,7 @@ const Layout: React.FC = () => {
   return (
     <div className="layout-container">
       
-            {/* 🧭 SIDEBAR NAV */}
+      {/* 🧭 SIDEBAR NAV */}
       <aside className={`sidebar ${isCollapsed ? 'collapsed' : ''}`}>
         {/* Floating Toggle Button */}
         <button 
@@ -79,17 +79,17 @@ const Layout: React.FC = () => {
               </Link>
             </li>
 
-            <li className={`menu-item ${isActive('/services') ? 'active' : ''}`}>
-              <Link to="/services">
-                <Settings size={20} />
-                {!isCollapsed && <span>RTO Services</span>}
-              </Link>
-            </li>
-
             <li className={`menu-item ${isActive('/requests') ? 'active' : ''}`}>
               <Link to="/requests">
                 <ClipboardList size={20} />
                 {!isCollapsed && <span>Service Requests</span>}
+              </Link>
+            </li>
+
+            <li className={`menu-item ${isActive('/services') ? 'active' : ''}`}>
+              <Link to="/services">
+                <Settings size={20} />
+                {!isCollapsed && <span>RTO Services</span>}
               </Link>
             </li>
 

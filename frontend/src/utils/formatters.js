@@ -2,7 +2,7 @@
  * Formats a input string into standard Indian RTO vehicle number format: XX-XX-XX-XXXX
  * Example: MH-12-SD-3421
  */
-export const formatVehicleNumber = (value: string): string => {
+export const formatVehicleNumber = (value) => {
   // Keep only alphanumeric characters and uppercase them
   const clean = value.toUpperCase().replace(/[^A-Z0-9]/g, '');
   const parts = [];
@@ -31,7 +31,7 @@ export const formatVehicleNumber = (value: string): string => {
  * Formats Chassis or Engine numbers: auto-uppercased, stripped of symbols, 
  * and separated into blocks of 5 characters with hyphens.
  */
-export const formatChassisOrEngine = (value: string): string => {
+export const formatChassisOrEngine = (value) => {
   const clean = value.toUpperCase().replace(/[^A-Z0-9]/g, '');
   const matches = clean.match(/.{1,5}/g);
   return matches ? matches.join('-') : clean;

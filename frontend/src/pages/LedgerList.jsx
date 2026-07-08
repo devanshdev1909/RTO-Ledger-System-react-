@@ -7,26 +7,11 @@ import './LedgerList.css';
 import './VehiclesList.css'; // Inherits shared table and pagination styles
 import { useAuth } from '../context/AuthContext';
 
-interface LedgerRecord {
-  id: number;
-  customer_id: number;
-  customer_name: string;
-  customer_code: string;
-  vehicle_id: number;
-  vehicle_number: string;
-  service_request_id: number;
-  request_no: string;
-  service_name: string;
-  service_fee: number;
-  amount_paid: number;
-  due_amount: number;
-  status: 'Paid' | 'Partial' | 'Unpaid';
-  created_at: string;
-}
 
-const LedgerList: React.FC = () => {
+
+const LedgerList = () => {
   const { hasPermission } = useAuth();
-  const [records, setRecords] = useState<LedgerRecord[]>([]);
+  const [records, setRecords] = useState([]);
   const [search, setSearch] = useState('');
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
@@ -35,8 +20,8 @@ const LedgerList: React.FC = () => {
 
   // Modal Control
   const [showModal, setShowModal] = useState(false);
-  const [selectedLedger, setSelectedLedger] = useState<LedgerRecord | null>(null);
-  const [errorMsg, setErrorMsg] = useState<string | null>(null);
+  const [selectedLedger, setSelectedLedger] = useState(null);
+  const [errorMsg, setErrorMsg] = useState(null);
 
   // Form State
   const [paymentAmount, setPaymentAmount] = useState('');
@@ -76,7 +61,7 @@ const LedgerList: React.FC = () => {
     loadLedgers();
   }, [search, page]);
 
-  const handleOpenPayment = (record: LedgerRecord) => {
+  const handleOpenPayment = (record) => {
     setSelectedLedger(record);
     setPaymentAmount(parseFloat(record.due_amount.toString()).toFixed(0)); // Auto-fill with remaining due
     setPaymentMode('Cash');
@@ -85,7 +70,7 @@ const LedgerList: React.FC = () => {
     setShowModal(true);
   };
 
-  const handleSubmitPayment = async (e: React.FormEvent) => {
+  const handleSubmitPayment = async (e) => {
     e.preventDefault();
     setErrorMsg(null);
     if (!selectedLedger) return;
@@ -110,7 +95,7 @@ const LedgerList: React.FC = () => {
             name: "RTO Ledger System",
             description: `Fee Payment for request #${selectedLedger.request_no}`,
             order_id: order_id,
-            handler: async function (res: any) {
+            handler: async function (res) {
               try {
                 const response = await api.post('/api/ledgers/payment', {
                   ledger_id: selectedLedger.id,
@@ -125,7 +110,7 @@ const LedgerList: React.FC = () => {
                   setShowModal(false);
                   loadLedgers(); // Reload the table
                 }
-              } catch (err: any) {
+              } catch (err) {
                 setErrorMsg(err.response?.data?.error || 'Failed to record online payment.');
               }
             },
@@ -142,13 +127,13 @@ const LedgerList: React.FC = () => {
             }
           };
 
-          const rzp = new (window as any).Razorpay(options);
-          rzp.on('payment.failed', function (resp: any) {
+          const rzp = new window.Razorpay(options);
+          rzp.on('payment.failed', function (resp) {
             setErrorMsg(`Payment transaction failed: ${resp.error.description}`);
           });
           rzp.open();
         }
-      } catch (err: any) {
+      } catch (err) {
         setErrorMsg(err.response?.data?.error || err.message || "Failed to initiate online transaction.");
       }
     } else {
@@ -164,7 +149,7 @@ const LedgerList: React.FC = () => {
           setShowModal(false);
           loadLedgers(); // Reload the table
         }
-      } catch (err: any) {
+      } catch (err) {
         setErrorMsg(err.response?.data?.error || 'Failed to record payment.');
       }
     }
@@ -189,11 +174,11 @@ const LedgerList: React.FC = () => {
       {/* Main Ledger Table */}
       <div className="table-card">
         {loading ? (
-          <div style={{ padding: '40px', textAlignment: 'center' } as React.CSSProperties}>
+          <div style={{ padding: '40px', textAlignment: 'center' }}>
             <h2>Loading Accounts Ledger...</h2>
           </div>
         ) : records.length === 0 ? (
-          <div style={{ padding: '40px', textAlignment: 'center', color: 'var(--text-secondary)' } as React.CSSProperties}>
+          <div style={{ padding: '40px', textAlignment: 'center', color: 'var(--text-secondary)' }}>
             <AlertTriangle style={{ margin: '0 auto 10px' }} size={32} />
             <p>No billing ledger records found matching search filters.</p>
           </div>

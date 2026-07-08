@@ -8,31 +8,14 @@ import './VehiclesList.css';
 import './CustomersList.css'; // Shared table structures
 import { useAuth } from '../context/AuthContext';
 
-interface Vehicle {
-  id: number;
-  customer_id: number;
-  customer_name: string;
-  customer_code: string;
-  vehicle_number: string;
-  vehicle_type: string;
-  chassis_number: string | null;
-  engine_number: string | null;
-  registration_date: string | null;
-  driver_name: string | null;
-  driver_mobile: string | null;
-  is_active: boolean;
-}
 
-interface CustomerDropdownItem {
-  id: number;
-  name: string;
-  customer_code: string;
-}
 
-const VehiclesList: React.FC = () => {
+
+
+const VehiclesList = () => {
   const { user, hasPermission } = useAuth();
-  const [vehicles, setVehicles] = useState<Vehicle[]>([]);
-  const [customers, setCustomers] = useState<CustomerDropdownItem[]>([]);
+  const [vehicles, setVehicles] = useState([]);
+  const [customers, setCustomers] = useState([]);
   const [search, setSearch] = useState('');
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
@@ -41,9 +24,9 @@ const VehiclesList: React.FC = () => {
 
   // Modal Control States
   const [showModal, setShowModal] = useState(false);
-  const [modalMode, setModalMode] = useState<'create' | 'edit'>('create');
-  const [selectedVehicleId, setSelectedVehicleId] = useState<number | null>(null);
-  const [errorMsg, setErrorMsg] = useState<string | null>(null);
+  const [modalMode, setModalMode] = useState('create');
+  const [selectedVehicleId, setSelectedVehicleId] = useState(null);
+  const [errorMsg, setErrorMsg] = useState(null);
 
   const canEditVehicle = () => {
     if (user?.role === 'Admin') return true;
@@ -120,7 +103,7 @@ const VehiclesList: React.FC = () => {
     setShowModal(true);
   };
 
-  const handleOpenEdit = (vehicle: Vehicle) => {
+  const handleOpenEdit = (vehicle) => {
     setForm({
       customer_id: vehicle.customer_id.toString(),
       vehicle_number: vehicle.vehicle_number,
@@ -137,7 +120,7 @@ const VehiclesList: React.FC = () => {
     setShowModal(true);
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setErrorMsg(null);
 
@@ -173,12 +156,12 @@ const VehiclesList: React.FC = () => {
           loadVehicles();
         }
       }
-    } catch (err: any) {
+    } catch (err) {
       setErrorMsg(err.response?.data?.error || 'Operation failed. Please verify inputs.');
     }
   };
 
-  const handleToggleStatus = async (id: number, currentStatus: boolean) => {
+  const handleToggleStatus = async (id, currentStatus) => {
     try {
       const response = await api.patch(`/api/vehicles/${id}/status`, {
         is_active: !currentStatus
@@ -191,14 +174,14 @@ const VehiclesList: React.FC = () => {
     }
   };
 
-  const handleDelete = async (id: number) => {
+  const handleDelete = async (id) => {
     if (!window.confirm("Permanently delete this vehicle record?")) return;
     try {
       const response = await api.delete(`/api/vehicles/${id}`);
       if (response.data.success) {
         loadVehicles();
       }
-    } catch (err: any) {
+    } catch (err) {
       alert(err.response?.data?.error || 'Failed to delete vehicle record.');
     }
   };
@@ -229,11 +212,11 @@ const VehiclesList: React.FC = () => {
       {/* Main Database Table */}
       <div className="table-card">
         {loading ? (
-          <div style={{ padding: '40px', textAlignment: 'center' } as React.CSSProperties}>
+          <div style={{ padding: '40px', textAlignment: 'center' }}>
             <h2>Loading Vehicles Database...</h2>
           </div>
         ) : vehicles.length === 0 ? (
-          <div style={{ padding: '40px', textAlignment: 'center', color: 'var(--text-secondary)' } as React.CSSProperties}>
+          <div style={{ padding: '40px', textAlignment: 'center', color: 'var(--text-secondary)' }}>
             <AlertTriangle style={{ margin: '0 auto 10px' }} size={32} />
             <p>No vehicles found matching search filters.</p>
           </div>

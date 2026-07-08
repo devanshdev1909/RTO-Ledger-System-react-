@@ -3,7 +3,7 @@ import api from '../services/api';
 import { 
   Search, Plus, Edit2, Trash2, X, AlertTriangle, 
   Phone, Mail, MapPin, Check, AlertCircle, ShieldAlert,
-  Car, ClipboardList, IndianRupee, FileText, Info
+  Car, ClipboardList, FileText, Info
 } from 'lucide-react';
 import './CustomersList.css';
 import '../components/Layout.css'; // Inherits modal overlays
@@ -11,27 +11,14 @@ import './LedgerList.css'; // Inherits table headers styling
 import './ReceiptsList.css'; // Inherits receipts log badges
 import { useAuth } from '../context/AuthContext';
 
-interface Customer {
-  id: number;
-  customer_code: string;
-  name: string;
-  mobile: string;
-  email: string | null;
-  address: string | null;
-  is_active: boolean;
-  assigned_agent_id: number | null;
-  assigned_agent_name: string | null;
-}
 
-interface Agent {
-  id: number;
-  username: string;
-}
 
-const CustomersList: React.FC = () => {
+
+
+const CustomersList = () => {
   const { user, hasPermission } = useAuth();
-  const [customers, setCustomers] = useState<Customer[]>([]);
-  const [agents, setAgents] = useState<Agent[]>([]);
+  const [customers, setCustomers] = useState([]);
+  const [agents, setAgents] = useState([]);
   const [search, setSearch] = useState('');
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
@@ -40,14 +27,14 @@ const CustomersList: React.FC = () => {
 
   // Modal control states
   const [showModal, setShowModal] = useState(false);
-  const [modalMode, setModalMode] = useState<'create' | 'edit'>('create');
-  const [selectedCustomerId, setSelectedCustomerId] = useState<number | null>(null);
-  const [errorMsg, setErrorMsg] = useState<string | null>(null);
+  const [modalMode, setModalMode] = useState('create');
+  const [selectedCustomerId, setSelectedCustomerId] = useState(null);
+  const [errorMsg, setErrorMsg] = useState(null);
 
   // Profile Details Modal states
   const [showProfileModal, setShowProfileModal] = useState(false);
   const [profileLoading, setProfileLoading] = useState(false);
-  const [profileData, setProfileData] = useState<any | null>(null);
+  const [profileData, setProfileData] = useState(null);
 
   // Form States
   const [form, setForm] = useState({
@@ -59,7 +46,7 @@ const CustomersList: React.FC = () => {
     assigned_agent_id: ''
   });
 
-  const canEditCustomer = (customer: Customer) => {
+  const canEditCustomer = (customer) => {
     if (user?.role === 'Admin') return true;
     if (hasPermission('customer.edit')) return true;
     // Agent allotment bypass: allowed if the customer is assigned to this agent
@@ -113,7 +100,7 @@ const CustomersList: React.FC = () => {
   };
 
   // Handle Edit Modal Open
-  const handleOpenEdit = (customer: Customer) => {
+  const handleOpenEdit = (customer) => {
     setForm({
       customer_code: customer.customer_code,
       name: customer.name,
@@ -129,7 +116,7 @@ const CustomersList: React.FC = () => {
   };
 
   // Fetch detailed customer profile
-  const handleOpenProfileModal = async (customer: Customer) => {
+  const handleOpenProfileModal = async (customer) => {
     setProfileData(null);
     setProfileLoading(true);
     setShowProfileModal(true);
@@ -146,7 +133,7 @@ const CustomersList: React.FC = () => {
   };
 
   // Form Submit Handler
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setErrorMsg(null);
 
@@ -186,13 +173,13 @@ const CustomersList: React.FC = () => {
           loadCustomers();
         }
       }
-    } catch (err: any) {
+    } catch (err) {
       setErrorMsg(err.response?.data?.error || 'Operation failed. Please verify inputs.');
     }
   };
 
   // Toggle activation status
-  const handleToggleStatus = async (id: number, currentStatus: boolean) => {
+  const handleToggleStatus = async (id, currentStatus) => {
     try {
       const response = await api.patch(`/api/customers/${id}/status`, {
         is_active: !currentStatus
@@ -206,7 +193,7 @@ const CustomersList: React.FC = () => {
   };
 
   // Delete customer record
-  const handleDeleteCustomer = async (id: number) => {
+  const handleDeleteCustomer = async (id) => {
     if (!window.confirm("Are you sure you want to permanently delete this customer ID card?")) return;
     
     try {
@@ -214,7 +201,7 @@ const CustomersList: React.FC = () => {
       if (response.data.success) {
         loadCustomers();
       }
-    } catch (err: any) {
+    } catch (err) {
       alert(err.response?.data?.error || 'Failed to delete customer record.');
     }
   };
@@ -244,11 +231,11 @@ const CustomersList: React.FC = () => {
 
       {/* Main Grid Directory of ID Cards */}
       {loading ? (
-        <div style={{ padding: '40px', textAlignment: 'center' } as React.CSSProperties}>
+        <div style={{ padding: '40px', textAlignment: 'center' }}>
           <h2>Loading Customer Database...</h2>
         </div>
       ) : customers.length === 0 ? (
-        <div className="table-card" style={{ padding: '40px', textAlignment: 'center', color: 'var(--text-secondary)' } as React.CSSProperties}>
+        <div className="table-card" style={{ padding: '40px', textAlignment: 'center', color: 'var(--text-secondary)' }}>
           <AlertTriangle style={{ margin: '0 auto 10px' }} size={32} />
           <p>No customer records found matching search filters.</p>
         </div>
@@ -571,7 +558,7 @@ const CustomersList: React.FC = () => {
               ) : (
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '25px' }}>
                   
-                  {/* Row 1: Profile Header Card */}
+                  {/* Row 1 Header Card */}
                   <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
                     
                     {/* General Profile */}
@@ -595,9 +582,9 @@ const CustomersList: React.FC = () => {
                         💳 Financial Statements
                       </h3>
                       {(() => {
-                        const totalCharged = profileData.ledger.reduce((sum: number, cur: any) => sum + parseFloat(cur.service_fee), 0);
-                        const totalPaid = profileData.ledger.reduce((sum: number, cur: any) => sum + parseFloat(cur.amount_paid), 0);
-                        const totalDue = profileData.ledger.reduce((sum: number, cur: any) => sum + parseFloat(cur.due_amount), 0);
+                        const totalCharged = profileData.ledger.reduce((sum, cur) => sum + parseFloat(cur.service_fee), 0);
+                        const totalPaid = profileData.ledger.reduce((sum, cur) => sum + parseFloat(cur.amount_paid), 0);
+                        const totalDue = profileData.ledger.reduce((sum, cur) => sum + parseFloat(cur.due_amount), 0);
 
                         return (
                           <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
@@ -640,7 +627,7 @@ const CustomersList: React.FC = () => {
                             </tr>
                           </thead>
                           <tbody>
-                            {profileData.vehicles.map((v: any) => (
+                            {profileData.vehicles.map((v) => (
                               <tr key={v.id}>
                                 <td><span className="vehicle-badge">{v.vehicle_number}</span></td>
                                 <td>{v.vehicle_type}</td>
@@ -675,7 +662,7 @@ const CustomersList: React.FC = () => {
                             </tr>
                           </thead>
                           <tbody>
-                            {profileData.requests.map((r: any) => (
+                            {profileData.requests.map((r) => (
                               <tr key={r.id}>
                                 <td style={{ fontWeight: 700 }}>{r.request_no}</td>
                                 <td>{r.service_name}</td>
@@ -716,7 +703,7 @@ const CustomersList: React.FC = () => {
                             </tr>
                           </thead>
                           <tbody>
-                            {profileData.receipts.map((rec: any) => (
+                            {profileData.receipts.map((rec) => (
                               <tr key={rec.id}>
                                 <td style={{ fontWeight: 700 }}>{rec.receipt_no}</td>
                                 <td style={{ fontWeight: 600 }}>{rec.request_no}</td>

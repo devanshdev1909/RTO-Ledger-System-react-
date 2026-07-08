@@ -3,6 +3,7 @@ const Customer = require("../models/Customer");
 const pool = require("../config/db");
 const crypto = require("crypto");
 const Ledger = require("../models/Ledger");
+const Razorpay = require("razorpay");
 
 // 1. Customer Self-Registration
 exports.postRegister = async (req, res) => {
@@ -268,7 +269,6 @@ exports.getPortalReceipts = async (req, res) => {
   }
 };
 
-const Razorpay = require("razorpay");
 
 // 8. Create Razorpay Order for online customer payments
 exports.createRazorpayOrder = async (req, res) => {
