@@ -1,17 +1,23 @@
 const nodemailer = require("nodemailer");
-const { Resend } = require("resend");
 
 // ---------------------------------------------------------------------------
 // Transporter setup
-// Priority: Resend API (recommended for cloud hosting) → fallback to SMTP
+// Priority: Resend SMTP relay (cloud hosting) → fallback to Gmail SMTP (local)
 // ---------------------------------------------------------------------------
 let transporter;
 
 if (process.env.RESEND_API_KEY) {
-    // Resend nodemailer transport — works on Render/Railway free tier with no
-    // port restrictions. Sign up at https://resend.com (free: 3k emails/month)
-    const resend = new Resend(process.env.RESEND_API_KEY);
-    transporter = nodemailer.createTransport(resend.nodemailerTransport());
+    // Resend SMTP relay — works on Render/Railway/any host, no port restrictions
+    // Docs: https://resend.com/docs/send-with-nodemailer
+    transporter = nodemailer.createTransport({
+        host: "smtp.resend.com",
+        port: 465,
+        secure: true,
+        auth: {
+            user: "resend",                        // always the literal string "resend"
+            pass: process.env.RESEND_API_KEY,      // your Resend API key as the password
+        },
+    });
 } else {
     // Fallback: raw SMTP (works locally with Gmail App Password)
     const smtpPort = parseInt(process.env.SMTP_PORT, 10) || 465;
@@ -29,6 +35,7 @@ if (process.env.RESEND_API_KEY) {
     });
     console.warn("[Mailer] RESEND_API_KEY not set — falling back to raw SMTP (may fail on cloud hosts).");
 }
+
 
 // 1. Send status update notification email
 const sendStatusUpdateEmail = async (toEmail, customerName, requestDetails) => {
