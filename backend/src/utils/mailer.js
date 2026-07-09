@@ -5,6 +5,7 @@ const nodemailer = require("nodemailer");
 // Priority: Resend SMTP relay (cloud hosting) → fallback to Gmail SMTP (local)
 // ---------------------------------------------------------------------------
 let transporter;
+let FROM_EMAIL;
 
 if (process.env.RESEND_API_KEY) {
     // Resend SMTP relay — works on Render/Railway/any host, no port restrictions
@@ -18,6 +19,9 @@ if (process.env.RESEND_API_KEY) {
             pass: process.env.RESEND_API_KEY,      // your Resend API key as the password
         },
     });
+    // Resend only allows sending from a verified domain.
+    // Use RESEND_FROM_EMAIL if you have a verified domain, otherwise use the sandbox address.
+    FROM_EMAIL = process.env.RESEND_FROM_EMAIL || "RTO Ledger System <onboarding@resend.dev>";
 } else {
     // Fallback: raw SMTP (works locally with Gmail App Password)
     const smtpPort = parseInt(process.env.SMTP_PORT, 10) || 465;
@@ -33,6 +37,7 @@ if (process.env.RESEND_API_KEY) {
         connectionTimeout: 5000,
         greetingTimeout: 5000,
     });
+    FROM_EMAIL = `RTO Ledger System <${process.env.SMTP_FROM_EMAIL || process.env.SMTP_USER}>`;
     console.warn("[Mailer] RESEND_API_KEY not set — falling back to raw SMTP (may fail on cloud hosts).");
 }
 
@@ -43,7 +48,7 @@ const sendStatusUpdateEmail = async (toEmail, customerName, requestDetails) => {
         if (!toEmail) return { success: true, message: "No email provided" };
 
         const mailOptions = {
-            from: `RTO Ledger System <${process.env.SMTP_FROM_EMAIL || process.env.SMTP_USER}>`,
+            from: FROM_EMAIL,
             to: toEmail,
             subject: `Update on your Service Request (${requestDetails.request_no})`,
             html: `
@@ -82,7 +87,7 @@ const sendWelcomeEmail = async (toEmail, customerName, customerCode) => {
     try {
         if (!toEmail) return;
         const mailOptions = {
-            from: `RTO Ledger System <${process.env.SMTP_FROM_EMAIL || process.env.SMTP_USER}>`,
+            from: FROM_EMAIL,
             to: toEmail,
             subject: `Welcome to RTO Ledger System!`,
             html: `
@@ -106,7 +111,7 @@ const sendActivationEmail = async (toEmail, customerName) => {
     try {
         if (!toEmail) return;
         const mailOptions = {
-            from: `RTO Ledger System <${process.env.SMTP_FROM_EMAIL || process.env.SMTP_USER}>`,
+            from: FROM_EMAIL,
             to: toEmail,
             subject: `Account Activated Successfully`,
             html: `
@@ -129,7 +134,7 @@ const sendRequestCreatedEmail = async (toEmail, customerName, requestDetails) =>
     try {
         if (!toEmail) return;
         const mailOptions = {
-            from: `RTO Ledger System <${process.env.SMTP_FROM_EMAIL || process.env.SMTP_USER}>`,
+            from: FROM_EMAIL,
             to: toEmail,
             subject: `New Service Request Created (${requestDetails.request_no})`,
             html: `
@@ -162,7 +167,7 @@ const sendReceiptEmail = async (toEmail, customerName, receiptDetails) => {
     try {
         if (!toEmail) return;
         const mailOptions = {
-            from: `RTO Ledger System <${process.env.SMTP_FROM_EMAIL || process.env.SMTP_USER}>`,
+            from: FROM_EMAIL,
             to: toEmail,
             subject: `Payment Receipt (${receiptDetails.receipt_no})`,
             html: `
