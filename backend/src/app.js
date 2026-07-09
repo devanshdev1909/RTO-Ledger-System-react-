@@ -19,11 +19,27 @@ const webhookRouter = require("./routes/webhook.routes");
 
 const app = express();
 const PORT = process.env.PORT || 5000;
+const isProd = process.env.NODE_ENV === "production";
+
+// Trust reverse proxy (required for Render, Railway, etc.)
+if (isProd) app.set("trust proxy", 1);
 
 // CORS setup to share cookies with our React App
+const allowedOrigins = [
+    "http://localhost:5173",
+    process.env.FRONTEND_URL,   // e.g. https://rto-ledger.vercel.app
+].filter(Boolean); // remove undefined if FRONTEND_URL is not set
+
 app.use(
     cors({
-        origin: "http://localhost:5173",
+        origin: (origin, callback) => {
+            // Allow requests with no origin (e.g. Postman, mobile apps)
+            if (!origin || allowedOrigins.includes(origin)) {
+                callback(null, true);
+            } else {
+                callback(new Error(`CORS blocked: ${origin} is not allowed`));
+            }
+        },
         credentials: true,
         methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
         allowedHeaders: ["Content-Type", "Authorization"],
@@ -37,7 +53,7 @@ app.use("/api/webhooks/razorpay", express.raw({ type: "application/json" }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Express Session Middleware 
+// Express Session Middleware
 app.use(
     session({
         name: "sid",
@@ -45,9 +61,10 @@ app.use(
         resave: false,
         saveUninitialized: false,
         cookie: {
-            secure: false, // Set to true if using HTTPS
-            httpOnly: true, // Prevent client-side JS from reading cookie
-            maxAge: 24 * 60 * 60 * 1000, // 24 hours
+            secure: isProd,                        // HTTPS only in production
+            httpOnly: true,                        // Prevent client-side JS from reading cookie
+            sameSite: isProd ? "none" : "lax",    // "none" required for cross-origin cookies
+            maxAge: 24 * 60 * 60 * 1000,          // 24 hours
         },
     })
 );

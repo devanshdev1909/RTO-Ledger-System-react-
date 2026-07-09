@@ -1,22 +1,34 @@
 const nodemailer = require("nodemailer");
+const { Resend } = require("resend");
 
-const smtpPort = parseInt(process.env.SMTP_PORT, 10) || 465;
+// ---------------------------------------------------------------------------
+// Transporter setup
+// Priority: Resend API (recommended for cloud hosting) → fallback to SMTP
+// ---------------------------------------------------------------------------
+let transporter;
 
-// Configure the SMTP server connection
-const transporter = nodemailer.createTransport({
-    host: process.env.SMTP_HOST || 'smtp.gmail.com',
-    port: smtpPort,
-    secure: smtpPort === 465, // true for 465, false for 587
-    auth: {
-        user: process.env.SMTP_USER,
-        pass: process.env.SMTP_PASS,
-    },
-    tls: {
-        rejectUnauthorized: false
-    },
-    connectionTimeout: 5000,
-    greetingTimeout: 5000
-});
+if (process.env.RESEND_API_KEY) {
+    // Resend nodemailer transport — works on Render/Railway free tier with no
+    // port restrictions. Sign up at https://resend.com (free: 3k emails/month)
+    const resend = new Resend(process.env.RESEND_API_KEY);
+    transporter = nodemailer.createTransport(resend.nodemailerTransport());
+} else {
+    // Fallback: raw SMTP (works locally with Gmail App Password)
+    const smtpPort = parseInt(process.env.SMTP_PORT, 10) || 465;
+    transporter = nodemailer.createTransport({
+        host: process.env.SMTP_HOST || "smtp.gmail.com",
+        port: smtpPort,
+        secure: smtpPort === 465,
+        auth: {
+            user: process.env.SMTP_USER,
+            pass: process.env.SMTP_PASS,
+        },
+        tls: { rejectUnauthorized: false },
+        connectionTimeout: 5000,
+        greetingTimeout: 5000,
+    });
+    console.warn("[Mailer] RESEND_API_KEY not set — falling back to raw SMTP (may fail on cloud hosts).");
+}
 
 // 1. Send status update notification email
 const sendStatusUpdateEmail = async (toEmail, customerName, requestDetails) => {
