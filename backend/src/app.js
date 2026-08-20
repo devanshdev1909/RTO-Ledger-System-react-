@@ -19,10 +19,10 @@ const webhookRouter = require("./routes/webhook.routes");
 
 const app = express();
 const PORT = process.env.PORT || 5000;
-const isProd = process.env.NODE_ENV === "production";
+const isProd = process.env.NODE_ENV === "production" || process.env.RENDER === "true" || process.env.PORT !== undefined;
 
-// Trust reverse proxy (required for Render, Railway, etc.)
-if (isProd) app.set("trust proxy", 1);
+// Trust reverse proxy (required for Render, Railway, Vercel, Cloudflare, etc.)
+app.set("trust proxy", 1);
 
 // CORS setup to share cookies with our React App
 app.use(
@@ -61,7 +61,7 @@ app.use(
         resave: false,
         saveUninitialized: false,
         cookie: {
-            secure: isProd,                        // HTTPS only in production
+            secure: isProd,                        // HTTPS only in production/cloud hosts
             httpOnly: true,                        // Prevent client-side JS from reading cookie
             sameSite: isProd ? "none" : "lax",    // "none" required for cross-origin cookies
             maxAge: 24 * 60 * 60 * 1000,          // 24 hours

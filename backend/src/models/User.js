@@ -12,14 +12,15 @@ class User {
 
     // 2. Find user by email (Used during Staff Login)
     static async findByEmail(email) {
+        const cleanEmail = (email || '').trim().toLowerCase();
         const result = await pool.query(
             `
             SELECT u.*, r.name AS role_name
             FROM users u
             JOIN roles r ON u.role_id = r.id
-            WHERE u.email = $1
+            WHERE LOWER(TRIM(u.email)) = $1
             `,
-            [email]
+            [cleanEmail]
         );
         return result.rows[0];
     }
