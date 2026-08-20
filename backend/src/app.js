@@ -25,16 +25,16 @@ const isProd = process.env.NODE_ENV === "production";
 if (isProd) app.set("trust proxy", 1);
 
 // CORS setup to share cookies with our React App
-const allowedOrigins = [
-    "http://localhost:5173",
-    process.env.FRONTEND_URL,   // e.g. https://rto-ledger.vercel.app
-].filter(Boolean); // remove undefined if FRONTEND_URL is not set
-
 app.use(
     cors({
         origin: (origin, callback) => {
-            // Allow requests with no origin (e.g. Postman, mobile apps)
-            if (!origin || allowedOrigins.includes(origin)) {
+            // Allow requests with no origin (e.g. Postman, mobile apps) or from localhost / Vercel subdomains / configured FRONTEND_URL
+            if (
+                !origin ||
+                origin.includes("localhost") ||
+                origin.endsWith(".vercel.app") ||
+                (process.env.FRONTEND_URL && origin.replace(/\/$/, "") === process.env.FRONTEND_URL.replace(/\/$/, ""))
+            ) {
                 callback(null, true);
             } else {
                 callback(new Error(`CORS blocked: ${origin} is not allowed`));
