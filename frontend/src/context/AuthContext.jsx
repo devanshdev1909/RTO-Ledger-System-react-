@@ -52,7 +52,7 @@ export const AuthProvider = ({ children }) => {
         setPermissions(response.data.permissions || []);
       }
     } catch (err) {
-      setError(err.response?.data?.error || 'Staff login failed. Please try again.');
+      setError(err.response?.data?.error || err.message || 'Staff login failed. Please try again.');
       throw err;
     } finally {
       setAuthLoading(false);
@@ -71,7 +71,7 @@ export const AuthProvider = ({ children }) => {
         setPermissions([]);
       }
     } catch (err) {
-      setError(err.response?.data?.error || 'Customer login failed. Please try again.');
+      setError(err.response?.data?.error || err.message || 'Customer login failed. Please try again.');
       throw err;
     } finally {
       setAuthLoading(false);
