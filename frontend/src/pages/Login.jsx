@@ -4,7 +4,7 @@ import { Car } from 'lucide-react';
 import './Login.css';
 
 const Login = () => {
-  const { loginStaff, loginCustomer, error, setError, loading } = useAuth();
+  const { loginStaff, loginCustomer, error, setError, authLoading } = useAuth();
 
   // Active form view ('customer' or 'staff')
   const [activeTab, setActiveTab] = useState('customer');
@@ -124,9 +124,9 @@ const Login = () => {
               type="submit" 
               className="login-btn" 
               style={{ background: '#1c37a2ff', marginTop: '10px' }}
-              disabled={loading}
+              disabled={authLoading}
             >
-              {loading ? "Logging in..." : "Login →"}
+              {authLoading ? "Logging in..." : "Login →"}
             </button>
 
             <div className="customer-register-link">
@@ -183,9 +183,9 @@ const Login = () => {
               type="submit" 
               className="login-btn" 
               style={{ background: '#1c37a2ff', marginTop: '10px' }}
-              disabled={loading}
+              disabled={authLoading}
             >
-              {loading ? "Logging in..." : "Login →"}
+              {authLoading ? "Logging in..." : "Login →"}
             </button>
           </form>
 

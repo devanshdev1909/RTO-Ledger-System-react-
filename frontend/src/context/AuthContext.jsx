@@ -11,6 +11,7 @@ export const AuthProvider = ({ children }) => {
   const [userType, setUserType] = useState(null);
   const [permissions, setPermissions] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [authLoading, setAuthLoading] = useState(false);
   const [error, setError] = useState(null);
 
   // Check if session cookie is active on page load
@@ -42,7 +43,7 @@ export const AuthProvider = ({ children }) => {
   // Staff Login Handler
   const loginStaff = async (email, password) => {
     setError(null);
-    setLoading(true);
+    setAuthLoading(true);
     try {
       const response = await api.post('/api/auth/login', { email, password });
       if (response.data.success) {
@@ -54,14 +55,14 @@ export const AuthProvider = ({ children }) => {
       setError(err.response?.data?.error || 'Staff login failed. Please try again.');
       throw err;
     } finally {
-      setLoading(false);
+      setAuthLoading(false);
     }
   };
 
   // Customer Login Handler
   const loginCustomer = async (identifier, password) => {
     setError(null);
-    setLoading(true);
+    setAuthLoading(true);
     try {
       const response = await api.post('/api/portal/login', { identifier, password });
       if (response.data.success) {
@@ -73,13 +74,13 @@ export const AuthProvider = ({ children }) => {
       setError(err.response?.data?.error || 'Customer login failed. Please try again.');
       throw err;
     } finally {
-      setLoading(false);
+      setAuthLoading(false);
     }
   };
 
   // Logout Handler (works for both Staff & Customers)
   const logout = async () => {
-    setLoading(true);
+    setAuthLoading(true);
     try {
       await api.post('/api/auth/logout');
       setUser(null);
@@ -89,7 +90,7 @@ export const AuthProvider = ({ children }) => {
     } catch (err) {
       console.error('Logout failed:', err);
     } finally {
-      setLoading(false);
+      setAuthLoading(false);
     }
   };
 
@@ -106,6 +107,7 @@ export const AuthProvider = ({ children }) => {
         userType,
         permissions,
         loading,
+        authLoading,
         loginStaff,
         loginCustomer,
         logout,
