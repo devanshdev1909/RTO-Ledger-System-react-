@@ -1,12 +1,17 @@
 import axios from 'axios';
 
-// In production (Vercel), default to the live Render backend URL if VITE_API_URL is not set
-const defaultApiUrl = import.meta.env.DEV 
-  ? '' 
-  : (import.meta.env.VITE_API_URL || 'https://rto-ledger-system-react.onrender.com');
+const getBaseURL = () => {
+  if (typeof window !== 'undefined') {
+    const host = window.location.hostname;
+    if (host === 'localhost' || host === '127.0.0.1') {
+      return ''; // Use local Vite dev proxy
+    }
+  }
+  return import.meta.env.VITE_API_URL || 'https://rto-ledger-system-react.onrender.com';
+};
 
 const api = axios.create({
-  baseURL: defaultApiUrl,
+  baseURL: getBaseURL(),
   withCredentials: true, // Crucial sends/receives session cookies
   headers: {
     'Content-Type': 'application/json',
